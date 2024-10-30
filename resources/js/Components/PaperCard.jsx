@@ -2,7 +2,7 @@ import {Head, Link, usePage} from '@inertiajs/react';
 import Layout from "@/Layouts/Layout.jsx";
 import RedirectButton from "@/Components/RedirectButton.jsx";
 
-export default function PaperCard({ paper, paperStatus, author }){
+export default function PaperCard({ paper, paperStatus, reviewer }){
     return(
         <>
             <Link href={`/papers/${paper.id}`}>
@@ -30,6 +30,9 @@ export default function PaperCard({ paper, paperStatus, author }){
                                 ? paper.title.slice(0, 30) + '...'
                                 : paper.title}
                         </h2>
+                        {/*<h2 className="mt-2 text-xl font-semibold text-gray-900 dark:text-white">*/}
+                        {/*    {reviewer}*/}
+                        {/*</h2>*/}
                         <p className="mt-1">
                             {paper.abstract.length > 100
                                 ? paper.abstract.slice(0, 100) + '...'

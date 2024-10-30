@@ -72,6 +72,17 @@ export default function Layout({ user, header, children }) {
                                             </>
                                         )
                                         }
+                                        {user.role === 'reviewer' && (
+                                            <>
+                                                <li>
+                                                    <Link href={route('reviewerDashboard')}
+                                                          className={`${isActive('/dashboard/reviewer') ? 'text-blue-700' : 'text-gray-900'} hover:text-blue-700`}>
+                                                        Dashboard
+                                                    </Link>
+                                                </li>
+                                            </>
+                                        )
+                                        }
                                         <li>
                                             <Link
                                                 href={route('logout')}

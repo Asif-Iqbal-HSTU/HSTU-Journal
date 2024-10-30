@@ -1,21 +1,23 @@
 import {Head, router, useForm, usePage} from "@inertiajs/react";
 import Layout from "@/Layouts/Layout.jsx";
-import {useState} from "react";
+import {useState, useEffect} from "react";
 import {toast} from "react-toastify";
 import Modal from "@/Components/Modal.jsx";
 import PrimaryButton from "@/Components/PrimaryButton.jsx";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faArrowLeft, faArrowRight} from "@fortawesome/free-solid-svg-icons";
 import SecondaryButton from "@/Components/SecondaryButton.jsx";
+import {faArrowLeft, faArrowRight, faEye} from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 // import {Inertia} from '@inertiajs/inertia'
-export default function NewManuscript() {
+export default function EditManuscript() {
     const user = usePage().props.auth.user;
+    const { paper } = usePage().props;
     const [currentStep, setCurrentStep] = useState(1);
     const [userID, setUserID] = useState(1);
     const [showModal, setShowModal] = useState(false);
     const [notification, setNotification] = useState(null);
-    const [errorMessages, setErrorMessages] = useState([]); // State for error messages
-    const [showErrorModal, setShowErrorModal] = useState(false); // State for error modal
+    const [coAuthorCount, setCoAuthorCount] = useState(0);
+
+    console.log(paper.classifications.map((item) => item.name));
 
     const [formData, setFormData] = useState({
         type: '',
@@ -48,19 +50,19 @@ export default function NewManuscript() {
 
 
     const { data, setData, post, processing, errors, reset } = useForm({
-        type: '',
-        user_id: '',
-        title: '',
-        abstract: '',
-        keywords: '',
-        funding: '',
-        conflictsOfInterest: '',
-        consentToPolicies: '',
-        ethicalStatement: '',
-        language_option: '',
-        comments: '',
-        coAuthors: [],
-        classification: [],
+        type: paper.type || '',
+        user_id: paper.user_id || '',
+        title: paper.title || '',
+        abstract: paper.abstract || '',
+        keywords: paper.keywords || '',
+        funding: paper.funding || '',
+        conflictsOfInterest: paper.conflictsOfInterest || '',
+        consentToPolicies: paper.consentToPolicies || '',
+        ethicalStatement: paper.ethicalStatement || '',
+        language_option: paper.language_option || '',
+        comments: paper.comments || '',
+        coAuthors: paper.coauthors || [],
+        classification: paper.classifications.map((item) => item.name) || [],
         files: {
             docFile: null,
             pdfFile: null,
@@ -68,7 +70,33 @@ export default function NewManuscript() {
         },
     });
 
-    const [coAuthorCount, setCoAuthorCount] = useState(0);
+    // Load the initial form data from the paper prop when the component mounts
+    useEffect(() => {
+        if (paper) {
+            setData((prev) => ({
+                ...prev,
+                type: paper.type || '',
+                user_id: paper.user_id || '',
+                title: paper.title || '',
+                abstract: paper.abstract || '',
+                keywords: paper.keywords || '',
+                funding: paper.funding || '',
+                conflictsOfInterest: paper.conflictsOfInterest || '',
+                consentToPolicies: paper.consentToPolicies || '',
+                ethicalStatement: paper.ethicalStatement || '',
+                language_option: paper.language_option || '',
+                comments: paper.comments || '',
+                coAuthors: paper.coauthors || [],
+                classification: paper.classifications || [],
+                files: {
+                    docFile: paper.files?.docFile || null,
+                    pdfFile: paper.files?.pdfFile || null,
+                    zipFile: paper.files?.zipFile || null,
+                },
+            }));
+            setCoAuthorCount(paper.coauthors ? paper.coauthors.length : 0);
+        }
+    }, [paper]);
 
     const steps = [
         { title: 'Article Type' },
@@ -84,29 +112,31 @@ export default function NewManuscript() {
 
     const nextStep = () => setCurrentStep((prev) => Math.min(prev + 1, steps.length));
 
-    // const nextStep = () => {
-    //     // Call saveStep to save the current step's data before moving to the next one
-    //     saveStep(currentStep); // Pass the current step to the saveStep function
-    //
-    //     // Only move to the next step after saving the current data
-    //     setCurrentStep((prev) => Math.min(prev + 1, steps.length));
-    // };
-
     const prevStep = () => setCurrentStep((prev) => Math.max(prev - 1, 1));
 
     const classifications = ['Category A', 'Category B', 'Category C'];
 
     const handleInputChange = (field, value) => {
         if (field === 'classification') {
-            // Toggle selection for classification array
-            const newClassification = data.classification.includes(value)
-                ? data.classification.filter((item) => item !== value) // Remove if already selected
-                : [...data.classification, value]; // Add if not selected
+            // Check if the classification is already selected
+            const existing = data.classification.find((item) => item.name === value);
+
+            let newClassification;
+            if (existing) {
+                // Remove if already selected
+                newClassification = data.classification.filter((item) => item.name !== value);
+            } else {
+                // Add if not selected
+                newClassification = [...data.classification, { name: value }];
+            }
+
             setData({ ...data, classification: newClassification });
         } else {
             setData((prev) => ({ ...prev, [field]: value }));
         }
     };
+
+
 
 
     const handleCoAuthorChange = (index, field, value) => {
@@ -144,20 +174,16 @@ export default function NewManuscript() {
             zipFile: data.files.zipFile,
             coAuthors: data.coAuthors,
         };
-        router.post(route('storePaper'), formData, {
+        router.post(route('updatePaper', { paper_id: paper.id }), formData, {
             onSuccess: () => {
                 // setNotification('Paper uploaded');
                 // setShowModal(true);
-                setNotification('Paper uploaded');
+                setNotification('Paper updated');
                 setShowModal(true);
-                setShowErrorModal(false);
                 console.log("okay");
             },
             onError: (errors) => {
-                //console.log(errors);
-                setErrorMessages(Object.values(errors).flat()); // Collect all error messages
-                setShowErrorModal(true);
-                setShowModal(false);
+                console.log(errors);
             }
         });
     }
@@ -194,13 +220,18 @@ export default function NewManuscript() {
                                     <input
                                         type="checkbox"
                                         value={classification}
-                                        checked={data.classification.includes(classification)}
+                                        checked={data.classification.some((item) => item.name === classification)}
                                         onChange={() => handleInputChange('classification', classification)}
                                         className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
                                     />
-                                    <label htmlFor={`checkbox-${index}`} className="ms-2 text-sm font-medium text-gray-900">
+                                    <label htmlFor={`checkbox-${index}`}
+                                           className="ms-2 text-sm font-medium text-gray-900">
                                         {classification}
                                     </label>
+                                    {/* Debugging the checkbox state */}
+                                    {/*<span>{console.log('Checkbox state:', data.classification.some((item) => item.name === classification))}</span>*/}
+                                    {/*<span>{console.log('Classifications in data:', data.classification)}</span>*/}
+                                    {/*<span>{console.log('Is checked:', data.classification.some((item) => item.name === classification), 'for', classification)}</span>*/}
                                 </div>
                             ))}
                             {errors.classification && <p className="text-red-500">{errors.classification}</p>}
@@ -289,6 +320,12 @@ export default function NewManuscript() {
                                 onChange={(e) => handleFileChange('docFile', e.target.files[0])}
                                 className="border rounded w-full py-2 px-3"
                             />
+                            {/* Show the file name if it exists */}
+                            {data.files.docFile && (
+                                <p className="mt-2 text-sm text-gray-600">
+                                    Current File: {data.files.docFile.name || paper.files.docFile}
+                                </p>
+                            )}
                             {errors.docFile && <p className="text-red-500">{errors.docFile}</p>}
                         </div>
                         <div className="mb-4">
@@ -298,6 +335,11 @@ export default function NewManuscript() {
                                 onChange={(e) => handleFileChange('pdfFile', e.target.files[0])}
                                 className="border rounded w-full py-2 px-3"
                             />
+                            {data.files.pdfFile && (
+                                <p className="mt-2 text-sm text-gray-600">
+                                    Current File: {data.files.pdfFile.name || paper.files.pdfFile}
+                                </p>
+                            )}
                             {errors.pdfFile && <p className="text-red-500">{errors.pdfFile}</p>}
                         </div>
                         <div className="mb-4">
@@ -307,10 +349,16 @@ export default function NewManuscript() {
                                 onChange={(e) => handleFileChange('zipFile', e.target.files[0])}
                                 className="border rounded w-full py-2 px-3"
                             />
+                            {data.files.zipFile && (
+                                <p className="mt-2 text-sm text-gray-600">
+                                    Current File: {data.files.zipFile.name || paper.files.zipFile}
+                                </p>
+                            )}
                             {errors.zipFile && <p className="text-red-500">{errors.zipFile}</p>}
                         </div>
                     </div>
                 );
+
             case 6:
                 return (
                     <div>
@@ -415,8 +463,16 @@ export default function NewManuscript() {
                             <p>Title: {data.title}</p>
                             <p>Abstract: {data.abstract}</p>
                             <p>Keywords: {data.keywords}</p>
-                            <p>Classifications: {data.classification.join(', ')}</p>
-                            {/*<p>Co-Authors: {JSON.stringify(data.coAuthors, null, 2)}</p>*/}
+
+                            {/* Display classification names */}
+                            <p>
+                                Classifications:{" "}
+                                {data.classification
+                                    .map((item) => item.name)
+                                    .join(', ')}
+                            </p>
+
+                            {/* Display co-author names */}
                             <p>
                                 Co-Authors:{" "}
                                 {data.coAuthors
@@ -429,6 +485,7 @@ export default function NewManuscript() {
                         </PrimaryButton>
                     </div>
                 );
+
             default:
                 return null;
         }
@@ -490,7 +547,7 @@ export default function NewManuscript() {
                                             {currentStep > 1 && (
                                                 <SecondaryButton
                                                     type="button"
-                                                    className=""
+                                                    className="mt-2"
                                                     onClick={prevStep}
                                                 >
                                                     <FontAwesomeIcon icon={faArrowLeft} className="mr-2" />
@@ -500,7 +557,7 @@ export default function NewManuscript() {
                                             {currentStep < steps.length && (
                                                 <PrimaryButton
                                                     type="button"
-                                                    className="bg-blue-500 text-white py-2 px-4 rounded"
+                                                    className="mt-2"
                                                     onClick={nextStep}
                                                 >
                                                     Next <FontAwesomeIcon icon={faArrowRight} className="ml-2" />
@@ -513,20 +570,6 @@ export default function NewManuscript() {
                                             <h2 className="text-2xl font-semibold mb-4 text-gray-900 dark:text-white">Success</h2>
                                             <p className='text-gray-900 dark:text-white'>{notification}</p>
                                             <button onClick={() => setShowModal(false)} className="mt-4 px-4 py-2 bg-blue-500 text-white rounded">
-                                                Close
-                                            </button>
-                                        </div>
-                                    </Modal>
-                                    {/* Error Modal */}
-                                    <Modal show={showErrorModal} onClose={() => setShowErrorModal(false)} maxWidth="md">
-                                        <div className="p-6 text-center">
-                                            <h2 className="text-2xl font-semibold mb-4 text-red-500">Validation Errors</h2>
-                                            <ul className='text-gray-900 dark:text-white'>
-                                                {errorMessages.map((error, index) => (
-                                                    <li key={index} className="mb-2">{error}</li>
-                                                ))}
-                                            </ul>
-                                            <button onClick={() => setShowErrorModal(false)} className="mt-4 px-4 py-2 bg-red-500 text-white rounded">
                                                 Close
                                             </button>
                                         </div>

@@ -35,4 +35,9 @@ class Paper extends Model
     {
         return $this->hasOne(Connectedreviewer::class);
     }
+
+    public function review(): HasOne
+    {
+        return $this->hasOne(Review::class);
+    }
 }

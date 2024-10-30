@@ -64,24 +64,42 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                                         Welcome to ScholarlyFlow – your seamless solution for academic journal management. Our platform empowers authors, editors, and reviewers to collaborate efficiently and transparently. Authors can easily submit their manuscripts and track the status of their submissions. Editors can assign reviewers, manage feedback, and make informed decisions on submissions. Reviewers can access their allocated papers and provide detailed feedback effortlessly. ScholarlyFlow ensures a streamlined, user-friendly experience for the entire academic publishing process. Join us in advancing academic excellence with ScholarlyFlow.
                                     </p>
                                     <div className="flex items-center gap-4 mt-4">
-
                                         {auth.user ? (
-                                            <Link
-                                                href={route('dashboard')}>
-                                                <PrimaryButton>
-                                                    Dashboard
-                                                </PrimaryButton>
-                                            </Link>
+                                            <>
+                                                {auth.user.role === "author" ? (
+                                                    <Link href={route('authorDashboard')}>
+                                                        <PrimaryButton>
+                                                            Dashboard
+                                                        </PrimaryButton>
+                                                    </Link>
+                                                ) : auth.user.role === "Editor" ? (
+                                                    <Link href={route('editorDashboard')}>
+                                                        <PrimaryButton>
+                                                            Dashboard
+                                                        </PrimaryButton>
+                                                    </Link>
+                                                ) : auth.user.role === "reviewer" ? (
+                                                    <Link href={route('reviewerDashboard')}>
+                                                        <PrimaryButton>
+                                                            Dashboard
+                                                        </PrimaryButton>
+                                                    </Link>
+                                                ) : (
+                                                    <Link href={route('dashboard')}>
+                                                        <PrimaryButton>
+                                                            Dashboard
+                                                        </PrimaryButton>
+                                                    </Link>
+                                                )}
+                                            </>
                                         ) : (
                                             <>
-                                                <Link
-                                                    href={route('login')}>
+                                                <Link href={route('login')}>
                                                     <ExtraButton>
                                                         Login
                                                     </ExtraButton>
                                                 </Link>
-                                                <Link
-                                                    href={route('register')}>
+                                                <Link href={route('register')}>
                                                     <ExtraButton>
                                                         Register
                                                     </ExtraButton>
@@ -89,6 +107,7 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                                             </>
                                         )}
                                     </div>
+
                                 </div>
                             </div>
                         </div>

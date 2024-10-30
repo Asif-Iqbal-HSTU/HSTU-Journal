@@ -5,7 +5,7 @@ import PaperCard from "@/Components/PaperCard.jsx";
 export default function ReviewerDashboard() {
     const user = usePage().props.auth.user;
     const { papers } = usePage().props;
-
+    console.log(papers);
     return (
         <Layout
             user={user}
@@ -32,33 +32,37 @@ export default function ReviewerDashboard() {
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 flex justify-center">
                                     {papers
                                         .filter(
-                                            (paper) =>
-                                                paper.status && paper.status.name === "Approved"
+                                            (paper) => paper.status && paper.status.name === "Approved"
                                         ) // Filter papers with status "Approved"
-                                        // .filter(
-                                        //     (paper) =>
-                                        //         paper.connectedReviewer &&
-                                        //         paper.connectedReviewer.reviewer &&
-                                        //         paper.connectedReviewer.reviewer.email === user.email
-                                        // ) // Filter papers where connected reviewer email matches the user's email
+                                        .filter(
+                                            (paper) =>
+                                                paper.connected_reviewer &&
+                                                paper.connected_reviewer.reviewer &&
+                                                paper.connected_reviewer.reviewer.email === user.email
+                                        ) // Filter papers where connected reviewer email matches the user's email
                                         .map((paper) => {
                                             const authorName =
                                                 paper.author && paper.author.user
                                                     ? paper.author.user.name
-                                                    : "Unknown Author"; // Check if author and user exist
+                                                    : "Unknown Author";
+
+                                            const reviewerName =
+                                                paper.connected_reviewer &&
+                                                paper.connected_reviewer.reviewer &&
+                                                paper.connected_reviewer.reviewer.email
+                                                    ? paper.connected_reviewer.reviewer.email
+                                                    : "Unknown";
 
                                             return (
-                                                <>
-                                                    <PaperCard
-                                                        key={paper.id}
-                                                        paper={paper}
-                                                        paperStatus={paper.status.name}
-                                                        author={authorName}
-                                                    />
-
-                                                </>
+                                                <PaperCard
+                                                    key={paper.id}
+                                                    paper={paper}
+                                                    paperStatus={paper.status.name}
+                                                    reviewer={reviewerName}
+                                                />
                                             );
                                         })}
+
                                 </div>
                             </div>
                         </div>

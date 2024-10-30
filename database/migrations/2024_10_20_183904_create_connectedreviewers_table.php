@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('paper_id')->constrained()->onDelete('cascade'); // Foreign key to users table
             $table->foreignId('reviewer_id')->constrained()->onDelete('cascade'); // Foreign key to users table
+            $table->string('reviewerState')->nullable();
             $table->timestamps();
         });
     }

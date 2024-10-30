@@ -81,7 +81,6 @@ export default function PaperPreview() {
                                     value={data.email}
                                     className="mt-1 block w-full"
                                     autoComplete="email"
-                                    isFocused={true}
                                     onChange={(e) => setData('email', e.target.value)}
                                     placeholder="abcd@gmail.com"
                                 />
@@ -97,7 +96,6 @@ export default function PaperPreview() {
                                     value={data.affiliation}
                                     className="mt-1 block w-full"
                                     autoComplete="affiliation"
-                                    isFocused={true}
                                     onChange={(e) => setData('affiliation', e.target.value)}
                                     placeholder="Enter affiliation"
                                 />

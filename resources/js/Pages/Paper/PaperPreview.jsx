@@ -1,9 +1,9 @@
-import {Head, Link, useForm, usePage} from '@inertiajs/react';
+import {Head, Link, router, useForm, usePage} from '@inertiajs/react';
 import Layout from '@/Layouts/Layout.jsx';
 import dayjs from 'dayjs';
 
 // FontAwesome Icons
-import { faFileWord, faFilePdf, faFileArchive } from '@fortawesome/free-solid-svg-icons';
+import {faFileWord, faFilePdf, faFileArchive, faEye} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import InputLabel from "@/Components/InputLabel.jsx";
 import TextInput from "@/Components/TextInput.jsx";
@@ -19,10 +19,72 @@ export default function PaperPreview() {
         paper_id: paper.id,
     });
 
+
+
+    const initialData2 = connectedReviewer
+        ? {
+            reviewer_id: connectedReviewer.reviewer.id,
+            paper_id: paper.id,
+            reviewerState: '',
+        }
+        : {
+            reviewer_id: '',
+            paper_id: paper.id,
+            reviewerState: '',
+        };
+
+    const { data: data2, setData: setData2, post: post2, processing: processing2, errors: errors2, reset: reset2 } = useForm(initialData2);
+
+    const initialData3 =
+        {
+            paper_id: paper.id,
+            name: '',
+        }
+
+    const { data: data3, setData: setData3, post: post3, processing: processing3, errors: errors3, reset: reset3 } = useForm(initialData3);
+
+
     const submit = (e) => {
         e.preventDefault();
 
         post(route('connectReviewer'));
+    };
+
+    const submit2 = (e) => {
+        e.preventDefault();
+        const formData2 = {
+            reviewer_id: data2.reviewer_id,
+            paper_id: data2.paper_id,
+            reviewerState: data2.reviewerState,
+        };
+        router.post(route('updateReviewerState'), formData2, {
+            onSuccess: () => {
+                console.log("OK");
+            },
+            onError: (errors2) => {
+                console.log(errors2);
+            }
+        });
+
+        //post(route('updateReviewerState'));
+    };
+
+    const submit3 = (e) => {
+        e.preventDefault();
+        const formData3 = {
+            paper_id: data3.paper_id,
+            name: data3.name,
+        };
+        router.post(route('statusChange'), formData3, {
+            onSuccess: () => {
+                console.log("status Changed");
+            },
+            onError: (errors2) => {
+                console.log(errors2);
+            }
+        });
+
+        //post(route('updateReviewerState'));
     };
 
     return (
@@ -140,48 +202,199 @@ export default function PaperPreview() {
 
                                 {/* If paperReviewer is present (i.e., not null), display the reviewer name */}
                                 {paper.status.name === "Approved" ? (
-                                    <div>
-                                        <h2 className="mt-8 text-lg font-semibold text-gray-900 dark:text-white">
-                                            This paper is distributed to a reviewer. {connectedReviewer.reviewer.name}
-                                        </h2>
-                                    </div>
+                                    <>
+                                        <div>
+                                            <h2 className="mt-8 text-lg font-semibold text-gray-900 dark:text-white">
+                                                This paper is distributed to a reviewer. {connectedReviewer.reviewer.name}
+                                            </h2>
+                                        </div>
+                                        {connectedReviewer.reviewerState === "Reviewed" ? (
+                                            <>
+                                                <div>
+                                                    <Link href={`/papers/${paper.id}/review`}>
+                                                        <h2 className="mt-8 text-lg font-semibold text-green-700 dark:text-white">
+                                                            {connectedReviewer.reviewer.name} has Reviewed the paper.
+                                                            <FontAwesomeIcon icon={faEye} className="ml-2"/>
+                                                        </h2>
+                                                    </Link>
+                                                    <hr className="h-px my-2 bg-green-300 border-0 dark:bg-gray-700"/>
+                                                    <h2 className="mt-8 text-lg font-semibold text-green-700 dark:text-white">
+                                                        Make a Decision
+                                                    </h2>
+                                                    <form className="max-w-full mx-auto m-5" onSubmit={submit3}>
+                                                        <div className="mt-4">
+                                                            <InputLabel htmlFor="name"
+                                                                        value="Select Your Choice"/>
+
+                                                            <select
+                                                                id="name"
+                                                                name="name"
+                                                                value={data3.name}
+                                                                className="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
+                                                                onChange={(e) => setData3('name', e.target.value)}
+                                                            >
+                                                                <option value="">Select an option</option>
+                                                                <option value="Accepted">Accepted</option>
+                                                                <option value="Rejected">Rejected</option>
+                                                                <option value="Revision">Revision</option>
+
+                                                            </select>
+
+                                                            <InputError message={errors3.name}
+                                                                        className="mt-2"/>
+                                                        </div>
+
+                                                        <PrimaryButton className="mt-4" disabled={processing}>
+                                                            Submit
+                                                        </PrimaryButton>
+                                                    </form>
+                                                </div>
+
+                                            </>
+                                        ) : (
+                                            <>
+                                                {connectedReviewer.reviewerState === "Accepted" ? (
+                                                    <>
+                                                        <h2 className="mt-8 text-lg font-semibold text-gray-900 dark:text-white italic">
+                                                            {connectedReviewer.reviewer.name} is reviewing the paper.
+                                                        </h2>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        {connectedReviewer.reviewerState === "Rejected" ? (
+                                                            <>
+                                                                <div>
+                                                                    <h2 className="mt-8 text-lg font-semibold text-gray-900 dark:text-white">
+                                                                        {connectedReviewer.reviewer.name} has declined
+                                                                        reviewing the paper.
+                                                                    </h2>
+                                                                    <p className="mt-1 text-sm">
+                                                                        Distribute this paper to another reviewers for
+                                                                        reviewing.
+                                                                    </p>
+                                                                    <hr className="h-px my-2 bg-green-300 border-0 dark:bg-gray-700"/>
+                                                                    <form className="max-w-full mx-auto m-5"
+                                                                          onSubmit={submit}>
+                                                                        <div className="mt-4">
+                                                                            <InputLabel htmlFor="reviewer_id"
+                                                                                        value="Select Reviewer"/>
+
+                                                                            <select
+                                                                                id="reviewer_id"
+                                                                                name="reviewer_id"
+                                                                                value={data.reviewer_id}
+                                                                                className="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
+                                                                                onChange={(e) => setData('reviewer_id', e.target.value)}
+                                                                            >
+                                                                                <option value="">Select an option
+                                                                                </option>
+                                                                                {reviewers.map(reviewer => (
+                                                                                    <option key={reviewer.id}
+                                                                                            value={reviewer.id}>
+                                                                                        {reviewer.name}
+                                                                                    </option>
+                                                                                ))}
+                                                                            </select>
+
+                                                                            <InputError message={errors.reviewer_id}
+                                                                                        className="mt-2"/>
+                                                                        </div>
+
+                                                                        <PrimaryButton className="mt-4"
+                                                                                       disabled={processing}>
+                                                                            Submit
+                                                                        </PrimaryButton>
+                                                                    </form>
+                                                                </div>
+                                                            </>
+                                                        ) : (
+                                                            <>
+
+                                                            </>
+                                                        )}
+                                                    </>
+                                                )}
+                                            </>
+                                        )}
+                                    </>
+
                                 ) : (
-                                    <div>
-                                        <h2 className="mt-8 text-lg font-semibold text-gray-900 dark:text-white">
-                                            Distribute to a Reviewer
-                                        </h2>
-                                        <p className="mt-1 text-sm">
-                                            Distribute this paper to reviewers for
-                                            reviewing.
-                                        </p>
-                                        <hr className="h-px my-2 bg-green-300 border-0 dark:bg-gray-700"/>
-                                        <form className="max-w-full mx-auto m-5" onSubmit={submit}>
-                                            <div className="mt-4">
-                                                <InputLabel htmlFor="reviewer_id" value="Select Reviewer"/>
+                                    <>
+                                        {paper.status.name === "Accepted" ? (
+                                            <>
+                                                <h2 className="mt-8 text-lg font-semibold text-green-900 dark:text-white italic">
+                                                    You have Accepted the paper
+                                                </h2>
 
-                                                <select
-                                                    id="reviewer_id"
-                                                    name="reviewer_id"
-                                                    value={data.reviewer_id}
-                                                    className="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
-                                                    onChange={(e) => setData('reviewer_id', e.target.value)}
-                                                >
-                                                    <option value="">Select an option</option>
-                                                    {reviewers.map(reviewer => (
-                                                        <option key={reviewer.id} value={reviewer.id}>
-                                                            {reviewer.name}
-                                                        </option>
-                                                    ))}
-                                                </select>
+                                            </>
+                                        ) : (
+                                            <>
+                                                {paper.status.name === "Rejected" ? (
+                                                    <>
+                                                        <h2 className="mt-8 text-lg font-semibold text-red-900 dark:text-white italic">
+                                                            You have Rejected the paper
+                                                        </h2>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        {paper.status.name === "Revision" ? (
+                                                            <>
+                                                                <h2 className="mt-8 text-lg font-semibold text-red-900 dark:text-white italic">
+                                                                    You have sent the paper to revision
+                                                                </h2>
+                                                            </>
+                                                        ) : (
+                                                            <>
+                                                                <div>
+                                                                <h2 className="mt-8 text-lg font-semibold text-gray-900 dark:text-white">
+                                                                        Distribute to a Reviewer
+                                                                    </h2>
+                                                                    <p className="mt-1 text-sm">
+                                                                        Distribute this paper to reviewers for
+                                                                        reviewing.
+                                                                    </p>
+                                                                    <hr className="h-px my-2 bg-green-300 border-0 dark:bg-gray-700"/>
+                                                                    <form className="max-w-full mx-auto m-5"
+                                                                          onSubmit={submit}>
+                                                                        <div className="mt-4">
+                                                                            <InputLabel htmlFor="reviewer_id"
+                                                                                        value="Select Reviewer"/>
 
-                                                <InputError message={errors.reviewer_id} className="mt-2"/>
-                                            </div>
+                                                                            <select
+                                                                                id="reviewer_id"
+                                                                                name="reviewer_id"
+                                                                                value={data.reviewer_id}
+                                                                                className="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
+                                                                                onChange={(e) => setData('reviewer_id', e.target.value)}
+                                                                            >
+                                                                                <option value="">Select an option
+                                                                                </option>
+                                                                                {reviewers.map(reviewer => (
+                                                                                    <option key={reviewer.id}
+                                                                                            value={reviewer.id}>
+                                                                                        {reviewer.name}
+                                                                                    </option>
+                                                                                ))}
+                                                                            </select>
 
-                                            <PrimaryButton className="mt-4" disabled={processing}>
-                                                Submit
-                                            </PrimaryButton>
-                                        </form>
-                                    </div>
+                                                                            <InputError message={errors.reviewer_id}
+                                                                                        className="mt-2"/>
+                                                                        </div>
+
+                                                                        <PrimaryButton className="mt-4"
+                                                                                       disabled={processing}>
+                                                                            Submit
+                                                                        </PrimaryButton>
+                                                                    </form>
+                                                                </div>
+                                                            </>
+                                                        )}
+                                                    </>
+                                                )}
+                                            </>
+                                        )}
+                                    </>
+
                                 )}
                             </div>
                         </div>
@@ -273,12 +486,104 @@ export default function PaperPreview() {
                                             <FontAwesomeIcon icon={faFileArchive} size="2x"/>
                                         </a>
                                     </div>
-                                    <Link href={`/reviewerForm/${paper.id}`}>
-                                        <PrimaryButton className="mt-5">
-                                            Go to review form
-                                        </PrimaryButton>
-                                    </Link>
 
+                                    {user.role === 'reviewer' ? (
+                                        <>
+                                            {connectedReviewer.reviewerState ? (
+                                                <>
+                                                    {connectedReviewer.reviewerState === "Accepted" ? (
+                                                        <>
+                                                            <Link href={`/reviewerForm/${paper.id}`}>
+                                                                <PrimaryButton className="mt-5">
+                                                                    Go to review form
+                                                                </PrimaryButton>
+                                                            </Link>
+                                                        </>
+                                                    ):(
+                                                        <>
+                                                            {connectedReviewer.reviewerState === "Reviewed" ? (
+                                                                <>
+                                                                    <p className="mt-4 text-sm text-green-700 italic underline">
+                                                                        You Have Reviewed the paper
+                                                                    </p>
+                                                                </>
+                                                            ) : (
+                                                                <>
+                                                                <p className="mt-1 text-sm  text-red-700 italic underline">
+                                                                        You Have Rejected the paper to review
+                                                                    </p>
+                                                                </>
+                                                            )}
+
+                                                        </>
+                                                    )}
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <form className="max-w-full mx-auto m-5" onSubmit={submit2}>
+                                                        <div className="mt-4">
+                                                            <InputLabel htmlFor="reviewerState" value="Select Your Choice"/>
+
+                                                            <select
+                                                                id="reviewerState"
+                                                                name="reviewerState"
+                                                                value={data2.reviewerState}
+                                                                className="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
+                                                                onChange={(e) => setData2('reviewerState', e.target.value)}
+                                                            >
+                                                                <option value="">Select an option</option>
+                                                                <option value="Accepted">Accept</option>
+                                                                <option value="Rejected">Reject</option>
+
+                                                            </select>
+
+                                                            <InputError message={errors2.reviewerState} className="mt-2"/>
+                                                        </div>
+
+                                                        <PrimaryButton className="mt-4" disabled={processing}>
+                                                            Submit
+                                                        </PrimaryButton>
+                                                    </form>
+                                                </>
+                                            )}
+                                        </>
+
+
+                                    ) : (
+                                        <>
+                                            {user.role === "author" ? (
+                                                <>
+                                                    {paper.status.name === "Revision" ? (
+                                                        <>
+                                                            <Link href={`/papers/${paper.id}/review`}>
+                                                                <h2 className="mt-8 text-lg font-semibold text-green-700 dark:text-white">
+                                                                    Your paper is reviewed for revision.
+                                                                    <FontAwesomeIcon icon={faEye} className="ml-2"/>
+                                                                </h2>
+                                                            </Link>
+                                                            <Link href={`/papers/edit/${paper.id}`}>
+                                                                <PrimaryButton className="mt-4">
+                                                                    Edit Your Submission
+                                                                </PrimaryButton>
+                                                            </Link>
+                                                        </>
+                                                    ) : (
+                                                        <>
+
+                                                        </>
+                                                        )
+                                                    }
+
+                                                </>
+                                            ) : (
+                                                <>
+
+                                                </>
+                                            )}
+
+                                        </>
+                                    )
+                                    }
 
 
                                 </article>
