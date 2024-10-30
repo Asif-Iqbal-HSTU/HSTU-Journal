@@ -30,8 +30,11 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::get('/dashboard/author', [\App\Http\Controllers\DashboardController::class, 'gotoAuthorDashboard'])->middleware(['auth', 'verified'])->name('authorDashboard')->middleware(AuthorMiddleware::class);
-Route::get('/dashboard/editor', [\App\Http\Controllers\DashboardController::class, 'gotoEditorDashboard'])->middleware(['auth', 'verified'])->name('editorDashboard');
-Route::get('/dashboard/reviewer', [\App\Http\Controllers\DashboardController::class, 'gotoReviewerDashboard'])->middleware(['auth', 'verified'])->name('reviewerDashboard');
+//Route::get('/dashboard/author', [\App\Http\Controllers\DashboardController::class, 'gotoAuthorDashboard'])->middleware(['auth', 'verified'])->name('authorDashboard')->middleware(AuthorMiddleware::class);
+Route::get('/dashboard/editor', [\App\Http\Controllers\DashboardController::class, 'gotoEditorDashboard'])->middleware(['auth', 'verified'])->name('editorDashboard')->middleware(EditorMiddleware::class);
+//Route::get('/dashboard/editor', [\App\Http\Controllers\DashboardController::class, 'gotoEditorDashboard'])->middleware(['auth', 'verified'])->name('editorDashboard');
+Route::get('/dashboard/reviewer', [\App\Http\Controllers\DashboardController::class, 'gotoReviewerDashboard'])->middleware(['auth', 'verified'])->name('reviewerDashboard')->middleware(ReviewerMiddleware::class);
+//Route::get('/dashboard/reviewer', [\App\Http\Controllers\DashboardController::class, 'gotoReviewerDashboard'])->middleware(['auth', 'verified'])->name('reviewerDashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
