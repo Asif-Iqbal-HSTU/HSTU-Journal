@@ -17,16 +17,18 @@ class ReviewerMail extends Mailable
     public $title;
     public $abstract;
     public $u_name;
+    public $name;
     public $paper_id;
 
     /**
      * Create a new message instance.
      */
-    public function __construct($title, $abstract, $u_name)
+    public function __construct($title, $abstract, $u_name, $name)
     {
         $this->title = $title;
         $this->abstract = $abstract;
         $this->u_name = $u_name;
+        $this->name = $name;
     }
 
 //    public function __construct($subject, $header, $title, $message, $action_url = null, $action_text = null, $support_email = 'support@example.com')
@@ -57,7 +59,7 @@ class ReviewerMail extends Mailable
     {
         return new Content(
             view: 'mail.reviewerMail',
-            with: ['title' => $this->title, 'abstract' => $this->abstract, 'u_name' => $this->u_name]
+            with: ['title' => $this->title, 'abstract' => $this->abstract, 'u_name' => $this->u_name, 'name' => $this->name]
         );
     }
 

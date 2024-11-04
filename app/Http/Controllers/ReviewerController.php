@@ -100,12 +100,23 @@ class ReviewerController extends Controller
                     'role' => 'reviewer',
                     'password' => Hash::make($u_name),
                 ]);
-                Mail::to($reviewer->email)->send(new ReviewerMail($title, $abstract, $u_name));
+                $name = $user->name;
+                Mail::to($reviewer->email)->send(new ReviewerMail($title, $abstract, $u_name, $name));
             }
             else{
                 $u_name = $u->username;
-                Mail::to($reviewer->email)->send(new ReviewerMail($title, $abstract, $u_name));
+                $name = $u->name;
+                Mail::to($reviewer->email)->send(new ReviewerMail($title, $abstract, $u_name , $name));
             }
+
+//            MAIL_MAILER=smtp
+//            MAIL_HOST=smtp.gmail.com
+//            MAIL_PORT=587
+//            MAIL_USERNAME=hstujournal@gmail.com
+//            MAIL_PASSWORD=
+//            MAIL_ENCRYPTION=tls
+//            MAIL_FROM_ADDRESS="hstujournal@gmail.com"
+//            MAIL_FROM_NAME="${APP_NAME}"
 
 
 
