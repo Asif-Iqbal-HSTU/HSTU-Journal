@@ -121,7 +121,7 @@ export default function Layout({ user, header, children }) {
                                     onClick={toggleProfileDropdown}
                                 >
                                     <span className="sr-only">Open user menu</span>
-                                    <img className="w-8 h-8 rounded-full" src="/images/person.png" alt="user photo"/>
+                                    <img className="w-8 h-8 rounded-full" src="/images/user.png" alt="user photo"/>
                                 </button>
 
                                 {isProfileDropdownOpen && (

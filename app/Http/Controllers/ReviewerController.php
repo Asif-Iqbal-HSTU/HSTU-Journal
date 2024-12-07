@@ -71,6 +71,16 @@ class ReviewerController extends Controller
         ]);
 
         try {
+            $existingReviewer = Connectedreviewer::where('reviewer_id', $request->reviewer_id)
+                                     ->where('paper_id', $request->paper_id)
+                                     ->first();
+
+            if ($existingReviewer) {
+                // Delete the existing record
+                $existingReviewer->delete();
+            }
+
+            // Create a new Connectedreviewer record
             Connectedreviewer::create([
                 'reviewer_id' => $request->reviewer_id,
                 'paper_id' => $request->paper_id,
@@ -80,7 +90,8 @@ class ReviewerController extends Controller
             $paper = Paper::with(['status', 'author.user', 'coauthors', 'classifications'])->where('id', $request->paper_id)->first();
             $title = $paper->title;
             $abstract = $paper->abstract;
-            $paper_id = $paper->id;
+            $paper_id = $request->paper_id;
+            $reviewer_id = $request->reviewer_id;
 
             $u = User::where('email', $reviewer->email)->first();
             //dd($u->id);
@@ -101,24 +112,13 @@ class ReviewerController extends Controller
                     'password' => Hash::make($u_name),
                 ]);
                 $name = $user->name;
-                Mail::to($reviewer->email)->send(new ReviewerMail($title, $abstract, $u_name, $name));
+                Mail::to($reviewer->email)->send(new ReviewerMail($title, $abstract, $u_name, $name, $paper_id, $reviewer_id));
             }
             else{
                 $u_name = $u->username;
                 $name = $u->name;
-                Mail::to($reviewer->email)->send(new ReviewerMail($title, $abstract, $u_name , $name));
+                Mail::to($reviewer->email)->send(new ReviewerMail($title, $abstract, $u_name , $name, $paper_id, $reviewer_id));
             }
-
-//            MAIL_MAILER=smtp
-//            MAIL_HOST=smtp.gmail.com
-//            MAIL_PORT=587
-//            MAIL_USERNAME=hstujournal@gmail.com
-//            MAIL_PASSWORD=
-//            MAIL_ENCRYPTION=tls
-//            MAIL_FROM_ADDRESS="hstujournal@gmail.com"
-//            MAIL_FROM_NAME="${APP_NAME}"
-
-
 
             $status = $paper->status;
             //dd($status);
@@ -195,21 +195,104 @@ class ReviewerController extends Controller
 
     }
 
-    public function updateReviewerState(Request $request): RedirectResponse
+    // public function updateReviewerState(Request $request): RedirectResponse
+    // {
+    //     try {
+    //         $connectedReviewer = Connectedreviewer::where('reviewer_id', $request->reviewer_id)->where('paper_id', $request->paper_id)->first();
+    //         $connectedReviewer->reviewerState = $request->reviewerState;
+    //         $connectedReviewer->save();
+
+    //         return back();
+
+    //     } catch (\Exception $e) {
+    //         \Log::error('Mail sending failed: '.$e->getMessage());
+    //         flash()->error('Something is WRONG');
+    //         return back();
+    //     }
+    // }
+
+    // public function acceptReviewerState($reviewer_id, $paper_id): \Illuminate\View\View
+    // {
+    //     $this->updateReviewerState($reviewer_id, $paper_id, 'accepted');
+    //     return view('reviewer.accept');
+    // }
+
+    // public function declineReviewerState($reviewer_id, $paper_id): \Illuminate\View\View
+    // {
+    //     $this->updateReviewerState($reviewer_id, $paper_id, 'declined');
+    //     return view('reviewer.decline');
+    // }
+
+
+    // private function updateReviewerState($reviewer_id, $paper_id, $state)
+    // {
+    //     try {
+    //         $connectedReviewer = Connectedreviewer::where('reviewer_id', $reviewer_id)
+    //                             ->where('paper_id', $paper_id)
+    //                             ->first();
+
+    //         if ($connectedReviewer && $connectedReviewer->reviewerState) {
+    //             return view('reviewer.alreadyResponded');
+    //         }
+    //         else if($connectedReviewer){
+    //             $connectedReviewer->reviewerState = $state;
+    //             $connectedReviewer->save();
+    //             // Return the appropriate view based on the state
+    //             if ($state === 'accepted') {
+    //                 return view('reviewer.accept'); // Display the "Thank You" page with login button
+    //             } else {
+    //                 return view('reviewer.decline'); // Display the "We Understand" page
+    //             }
+    //         }
+
+            
+
+    //     } catch (\Exception $e) {
+    //         Log::error('Status update failed: ' . $e->getMessage());
+    //         return redirect()->route('review-confirmation')->with('error', 'An error occurred while updating status.');
+    //     }
+    // }
+
+    public function acceptReviewerState($reviewer_id, $paper_id): \Illuminate\View\View
+    {
+        $response = $this->updateReviewerState($reviewer_id, $paper_id, 'Accepted');
+        if ($response === 'alreadyResponded') {
+            return view('reviewer.alreadyResponded');
+        }
+        return view('reviewer.accept');
+    }
+
+    public function declineReviewerState($reviewer_id, $paper_id): \Illuminate\View\View
+    {
+        $response = $this->updateReviewerState($reviewer_id, $paper_id, 'Declined');
+        if ($response === 'alreadyResponded') {
+            return view('reviewer.alreadyResponded');
+        }
+        return view('reviewer.decline');
+    }
+
+    private function updateReviewerState($reviewer_id, $paper_id, $state)
     {
         try {
-            $connectedReviewer = Connectedreviewer::where('reviewer_id', $request->reviewer_id)->where('paper_id', $request->paper_id)->first();
-            $connectedReviewer->reviewerState = $request->reviewerState;
-            $connectedReviewer->save();
+            $connectedReviewer = Connectedreviewer::where('reviewer_id', $reviewer_id)
+                                ->where('paper_id', $paper_id)
+                                ->first();
 
-            return back();
-
+            if ($connectedReviewer && $connectedReviewer->reviewerState) {
+                // Indicate that the reviewer has already responded
+                return 'alreadyResponded';
+            } elseif ($connectedReviewer) {
+                $connectedReviewer->reviewerState = $state;
+                $connectedReviewer->save();
+                return 'success';
+            }
         } catch (\Exception $e) {
-            \Log::error('Mail sending failed: '.$e->getMessage());
-            flash()->error('Something is WRONG');
-            return back();
+            Log::error('Status update failed: ' . $e->getMessage());
+            return redirect()->route('review-confirmation')->with('error', 'An error occurred while updating status.');
         }
     }
+
+
 
 
 

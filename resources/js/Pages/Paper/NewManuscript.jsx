@@ -7,15 +7,28 @@ import PrimaryButton from "@/Components/PrimaryButton.jsx";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faArrowLeft, faArrowRight} from "@fortawesome/free-solid-svg-icons";
 import SecondaryButton from "@/Components/SecondaryButton.jsx";
+import ReviewerCard from "@/Components/ReviewerCard.jsx";
+import TextInput from "@/Components/TextInput.jsx";
+import AddReviewerForm  from "@/Components/AddReviewerForm.jsx";
+import KeywordField  from "@/Components/KeywordsField.jsx";
 // import {Inertia} from '@inertiajs/inertia'
 export default function NewManuscript() {
     const user = usePage().props.auth.user;
+    const { reviewers } = usePage().props;
     const [currentStep, setCurrentStep] = useState(1);
     const [userID, setUserID] = useState(1);
     const [showModal, setShowModal] = useState(false);
     const [notification, setNotification] = useState(null);
     const [errorMessages, setErrorMessages] = useState([]); // State for error messages
     const [showErrorModal, setShowErrorModal] = useState(false); // State for error modal
+    const [showReviewerAddModal, setShowReviewerAddModal] = useState(false); 
+    
+    const [searchQuery, setSearchQuery] = useState(""); // State for search query
+
+    // Filter reviewers based on search query
+    const filteredReviewers = reviewers.filter((reviewer) =>
+        reviewer.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
 
     const [formData, setFormData] = useState({
         type: '',
@@ -78,6 +91,7 @@ export default function NewManuscript() {
         { title: 'Upload Files' },
         { title: 'Fundings & Agreement' },
         { title: 'Language' },
+        { title: 'Reviewers' },
         { title: 'Comments' },
         { title: 'Confirmation' },
     ];
@@ -167,7 +181,7 @@ export default function NewManuscript() {
             case 1:
                 return (
                     <div>
-                        <h2 className="text-lg font-medium mb-4">Article Type Selection</h2>
+                        <h1 className="text-2xl font-bold mb-8">Article Type Selection</h1>
                         <div className="mb-4">
                             <label>Article Type</label>
                             <select
@@ -186,7 +200,7 @@ export default function NewManuscript() {
             case 2:
                 return (
                     <div>
-                        <h2 className="text-lg font-medium mb-4">Classification</h2>
+                        <h1 className="text-2xl font-bold mb-8">Classification</h1>
                         <div>
                             <label>Select the classifications your paper should satisfy</label>
                             {classifications.map((classification, index) => (
@@ -210,7 +224,7 @@ export default function NewManuscript() {
             case 3:
                 return (
                     <div>
-                        <h2 className="text-lg font-medium">Basic Info</h2>
+                        <h1 className="text-2xl font-bold mb-8">Basic Info</h1>
                         <div className="mb-4">
                             <label>Title</label>
                             <input
@@ -231,6 +245,7 @@ export default function NewManuscript() {
                             />
                             {errors.abstract && <p className="text-red-500">{errors.abstract}</p>}
                         </div>
+
                         <div className="mb-4">
                             <label>Keywords</label>
                             <input
@@ -241,12 +256,18 @@ export default function NewManuscript() {
                             />
                             {errors.keywords && <p className="text-red-500">{errors.keywords}</p>}
                         </div>
+
+                        {/*<div className="mb-4">
+                            <label>Keywords</label>
+                            <KeywordField />
+                            {errors.keywords && <p className="text-red-500">{errors.keywords}</p>}
+                        </div>*/}
                     </div>
                 );
             case 4:
                 return (
                     <div>
-                        <h2 className="text-lg font-medium">Corresponding Authors</h2>
+                        <h1 className="text-2xl font-bold mb-8">Corresponding Authors</h1>
                         <div className="mb-4">
                             <label>Number of Co-Authors</label>
                             <input
@@ -281,11 +302,12 @@ export default function NewManuscript() {
             case 5:
                 return (
                     <div>
-                        <h2 className="text-lg font-medium">Upload Files</h2>
+                        <h1 className="text-2xl font-bold mb-8">Upload Files</h1>
                         <div className="mb-4">
                             <label>Editable File (e.g. .docx)</label>
                             <input
                                 type="file"
+                                accept=".docx"
                                 onChange={(e) => handleFileChange('docFile', e.target.files[0])}
                                 className="border rounded w-full py-2 px-3"
                             />
@@ -295,6 +317,7 @@ export default function NewManuscript() {
                             <label>PDF File</label>
                             <input
                                 type="file"
+                                accept=".pdf"
                                 onChange={(e) => handleFileChange('pdfFile', e.target.files[0])}
                                 className="border rounded w-full py-2 px-3"
                             />
@@ -304,6 +327,7 @@ export default function NewManuscript() {
                             <label>Zip File</label>
                             <input
                                 type="file"
+                                accept=".zip,.rar"
                                 onChange={(e) => handleFileChange('zipFile', e.target.files[0])}
                                 className="border rounded w-full py-2 px-3"
                             />
@@ -314,7 +338,7 @@ export default function NewManuscript() {
             case 6:
                 return (
                     <div>
-                        <h2 className="text-lg font-medium">Funding Info</h2>
+                        <h1 className="text-2xl font-bold mb-8">Funding Info</h1>
 
                         <div className="mb-4">
                             <label>Funding Information</label>
@@ -370,7 +394,7 @@ export default function NewManuscript() {
             case 7:
                 return (
                     <div>
-                        <h2 className="text-lg font-medium mb-4">Language Option</h2>
+                        <h1 className="text-2xl font-bold mb-8">Language Option</h1>
                         <div className="mb-4">
                             <label>If English is not your first language, has your paper been edited by a native English speaker?</label>
                             <select
@@ -391,7 +415,49 @@ export default function NewManuscript() {
             case 8:
                 return (
                     <div>
-                        <h2 className="text-lg font-medium">Comments</h2>
+                        <h1 className="text-2xl font-bold mb-8">Reviewers</h1>
+                        <button
+                            onClick={() => setShowReviewerAddModal(true)}
+                            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
+                        >
+                            Add Reviewer
+                        </button>
+
+                        <div className="mb-4">
+                            <div className="block w-full p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-white dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+                            <h2 className="mt-2 text-lg font-semibold text-gray-900 dark:text-white">
+                                Existing Reviewers
+                            </h2>
+                            <p className="mt-1 text-sm">Here is a List of Existing Reviewer Here</p>
+                            <hr className="h-px my-2 bg-green-300 border-0 dark:bg-gray-700" />
+
+                            {/* Search Bar */}
+                            <div className="mb-4">
+                                <TextInput
+                                    id="search"
+                                    name="search"
+                                    value={searchQuery}
+                                    className="mt-1 block w-full"
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    placeholder="Search reviewers..."
+                                />
+                            </div>
+
+                            {/* Scrollable Reviewer List */}
+                            <div className="max-h-64 overflow-y-auto">
+                                {filteredReviewers.map((reviewer) => (
+                                    <ReviewerCard key={reviewer.id} reviewer={reviewer} />
+                                ))}
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+
+                );
+            case 9:
+                return (
+                    <div>
+                        <h1 className="text-2xl font-bold mb-8">Comments</h1>
 
                         <div className="mb-4">
                             <label>Comments</label>
@@ -406,10 +472,10 @@ export default function NewManuscript() {
                     </div>
 
                 );
-            case 9:
+            case 10:
                 return (
                     <div>
-                        <h2 className="text-lg font-medium">Confirmation</h2>
+                        <h1 className="text-2xl font-bold mb-8">Confirmation</h1>
                         <div>
                             <p>Type: {data.type}</p>
                             <p>Title: {data.title}</p>
@@ -476,7 +542,7 @@ export default function NewManuscript() {
                                     </ol>
                                 </div>
                                 <div className="w-3/4 p-8 bg-white rounded-lg shadow-lg">
-                                    <h1 className="text-2xl font-bold mb-8">Submit Paper</h1>
+                                    {/*<h1 className="text-2xl font-bold mb-8">Submit Paper</h1>*/}
                                     <form onSubmit={submitForm}>
                                         {/* <div className="mb-8">
                             {steps.map((step, index) => (
@@ -531,6 +597,20 @@ export default function NewManuscript() {
                                             </button>
                                         </div>
                                     </Modal>
+
+                                    <Modal show={showReviewerAddModal} onClose={() => setShowReviewerAddModal(false)} maxWidth="md">
+                                        <div className="p-6 text-center">
+                                            <h2 className="text-2xl font-semibold mb-4 text-gray-900 dark:text-white">Add Reviewer</h2>
+                                            <AddReviewerForm onSuccess={() => setShowReviewerAddModal(false)} />
+                                            <button
+                                                onClick={() => setShowReviewerAddModal(false)}
+                                                className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
+                                            >
+                                                Close
+                                            </button>
+                                        </div>
+                                    </Modal>
+
                                 </div>
                             </div>
                         </div>

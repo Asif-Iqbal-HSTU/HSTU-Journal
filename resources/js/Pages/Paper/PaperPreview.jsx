@@ -1,9 +1,9 @@
-import {Head, Link, router, useForm, usePage} from '@inertiajs/react';
+import { Head, Link, router, useForm, usePage } from '@inertiajs/react';
 import Layout from '@/Layouts/Layout.jsx';
 import dayjs from 'dayjs';
 
 // FontAwesome Icons
-import {faFileWord, faFilePdf, faFileArchive, faEye} from '@fortawesome/free-solid-svg-icons';
+import { faFileWord, faFilePdf, faFileArchive, faEye } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import InputLabel from "@/Components/InputLabel.jsx";
 import TextInput from "@/Components/TextInput.jsx";
@@ -36,10 +36,10 @@ export default function PaperPreview() {
     const { data: data2, setData: setData2, post: post2, processing: processing2, errors: errors2, reset: reset2 } = useForm(initialData2);
 
     const initialData3 =
-        {
-            paper_id: paper.id,
-            name: '',
-        }
+    {
+        paper_id: paper.id,
+        name: '',
+    }
 
     const { data: data3, setData: setData3, post: post3, processing: processing3, errors: errors3, reset: reset3 } = useForm(initialData3);
 
@@ -111,18 +111,18 @@ export default function PaperPreview() {
                                         <article
                                             className="mx-auto w-full max-w-2xl format format-sm sm:format-base lg:format-lg format-blue dark:format-invert"
                                         >
-                                    <span
-                                        className="bg-red-100 text-red-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-red-400 border border-red-400"
-                                    >
-                                        {paper.status.name}
-                                    </span>
+                                            <span
+                                                className="bg-red-100 text-red-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-red-400 border border-red-400"
+                                            >
+                                                {paper.status.name}
+                                            </span>
                                             <header className="mb-4 lg:mb-6 not-format">
                                                 <address className="flex items-center mb-6 not-italic">
                                                     <div
                                                         className="inline-flex items-center mr-3 text-sm text-gray-900 dark:text-white">
                                                         <div>
                                                             <a href="#" rel="author"
-                                                               className="text-xl font-bold text-gray-900 dark:text-white">
+                                                                className="text-xl font-bold text-gray-900 dark:text-white">
                                                                 {paper.author ? paper.author.user.name : 'Unknown'}
                                                             </a>
 
@@ -139,7 +139,7 @@ export default function PaperPreview() {
                                                             {paper.classifications && paper.classifications.length > 0 && (
                                                                 <p className="text-sm text-gray-500 dark:text-gray-400 italic">
                                                                     Classifications: <span
-                                                                    className="font-thin">{paper.classifications.map((c) => c.name).join(', ')}</span>
+                                                                        className="font-thin">{paper.classifications.map((c) => c.name).join(', ')}</span>
                                                                 </p>
                                                             )}
 
@@ -167,7 +167,7 @@ export default function PaperPreview() {
                                                     className="text-blue-600 hover:text-blue-800"
                                                     title="Download DOCX"
                                                 >
-                                                    <FontAwesomeIcon icon={faFileWord} size="2x"/>
+                                                    <FontAwesomeIcon icon={faFileWord} size="2x" />
                                                 </a>
 
                                                 {/* Download PDF */}
@@ -176,7 +176,7 @@ export default function PaperPreview() {
                                                     className="text-red-600 hover:text-red-800"
                                                     title="Download PDF"
                                                 >
-                                                    <FontAwesomeIcon icon={faFilePdf} size="2x"/>
+                                                    <FontAwesomeIcon icon={faFilePdf} size="2x" />
                                                 </a>
 
                                                 {/* Download ZIP */}
@@ -185,7 +185,7 @@ export default function PaperPreview() {
                                                     className="text-yellow-600 hover:text-yellow-800"
                                                     title="Download ZIP"
                                                 >
-                                                    <FontAwesomeIcon icon={faFileArchive} size="2x"/>
+                                                    <FontAwesomeIcon icon={faFileArchive} size="2x" />
                                                 </a>
                                             </div>
                                         </article>
@@ -206,6 +206,12 @@ export default function PaperPreview() {
                                         <div>
                                             <h2 className="mt-8 text-lg font-semibold text-gray-900 dark:text-white">
                                                 This paper is distributed to a reviewer. {connectedReviewer.reviewer.name}
+                                                {/* {paper.connectedReviewers}
+                                                {paper.connectedReviewers && paper.connectedReviewers.length > 0 && (
+                                                    <p className="text-base text-gray-500 dark:text-gray-400">
+                                                        Reviewers: {paper.connectedReviewers.map((c) => c.id).join(', ')}
+                                                    </p>
+                                                )} */}
                                             </h2>
                                         </div>
                                         {connectedReviewer.reviewerState === "Reviewed" ? (
@@ -214,17 +220,17 @@ export default function PaperPreview() {
                                                     <Link href={`/papers/${paper.id}/review`}>
                                                         <h2 className="mt-8 text-lg font-semibold text-green-700 dark:text-white">
                                                             {connectedReviewer.reviewer.name} has Reviewed the paper.
-                                                            <FontAwesomeIcon icon={faEye} className="ml-2"/>
+                                                            <FontAwesomeIcon icon={faEye} className="ml-2" />
                                                         </h2>
                                                     </Link>
-                                                    <hr className="h-px my-2 bg-green-300 border-0 dark:bg-gray-700"/>
+                                                    <hr className="h-px my-2 bg-green-300 border-0 dark:bg-gray-700" />
                                                     <h2 className="mt-8 text-lg font-semibold text-green-700 dark:text-white">
                                                         Make a Decision
                                                     </h2>
                                                     <form className="max-w-full mx-auto m-5" onSubmit={submit3}>
                                                         <div className="mt-4">
                                                             <InputLabel htmlFor="name"
-                                                                        value="Select Your Choice"/>
+                                                                value="Select Your Choice" />
 
                                                             <select
                                                                 id="name"
@@ -241,7 +247,7 @@ export default function PaperPreview() {
                                                             </select>
 
                                                             <InputError message={errors3.name}
-                                                                        className="mt-2"/>
+                                                                className="mt-2" />
                                                         </div>
 
                                                         <PrimaryButton className="mt-4" disabled={processing}>
@@ -261,7 +267,7 @@ export default function PaperPreview() {
                                                     </>
                                                 ) : (
                                                     <>
-                                                        {connectedReviewer.reviewerState === "Rejected" ? (
+                                                        {connectedReviewer.reviewerState === "Declined" ? (
                                                             <>
                                                                 <div>
                                                                     <h2 className="mt-8 text-lg font-semibold text-gray-900 dark:text-white">
@@ -272,12 +278,12 @@ export default function PaperPreview() {
                                                                         Distribute this paper to another reviewers for
                                                                         reviewing.
                                                                     </p>
-                                                                    <hr className="h-px my-2 bg-green-300 border-0 dark:bg-gray-700"/>
+                                                                    <hr className="h-px my-2 bg-green-300 border-0 dark:bg-gray-700" />
                                                                     <form className="max-w-full mx-auto m-5"
-                                                                          onSubmit={submit}>
+                                                                        onSubmit={submit}>
                                                                         <div className="mt-4">
                                                                             <InputLabel htmlFor="reviewer_id"
-                                                                                        value="Select Reviewer"/>
+                                                                                value="Select Reviewer" />
 
                                                                             <select
                                                                                 id="reviewer_id"
@@ -290,18 +296,18 @@ export default function PaperPreview() {
                                                                                 </option>
                                                                                 {reviewers.map(reviewer => (
                                                                                     <option key={reviewer.id}
-                                                                                            value={reviewer.id}>
+                                                                                        value={reviewer.id}>
                                                                                         {reviewer.name}
                                                                                     </option>
                                                                                 ))}
                                                                             </select>
 
                                                                             <InputError message={errors.reviewer_id}
-                                                                                        className="mt-2"/>
+                                                                                className="mt-2" />
                                                                         </div>
 
                                                                         <PrimaryButton className="mt-4"
-                                                                                       disabled={processing}>
+                                                                            disabled={processing}>
                                                                             Submit
                                                                         </PrimaryButton>
                                                                     </form>
@@ -346,19 +352,19 @@ export default function PaperPreview() {
                                                         ) : (
                                                             <>
                                                                 <div>
-                                                                <h2 className="mt-8 text-lg font-semibold text-gray-900 dark:text-white">
+                                                                    <h2 className="mt-8 text-lg font-semibold text-gray-900 dark:text-white">
                                                                         Distribute to a Reviewer
                                                                     </h2>
                                                                     <p className="mt-1 text-sm">
                                                                         Distribute this paper to reviewers for
                                                                         reviewing.
                                                                     </p>
-                                                                    <hr className="h-px my-2 bg-green-300 border-0 dark:bg-gray-700"/>
+                                                                    <hr className="h-px my-2 bg-green-300 border-0 dark:bg-gray-700" />
                                                                     <form className="max-w-full mx-auto m-5"
-                                                                          onSubmit={submit}>
+                                                                        onSubmit={submit}>
                                                                         <div className="mt-4">
                                                                             <InputLabel htmlFor="reviewer_id"
-                                                                                        value="Select Reviewer"/>
+                                                                                value="Select Reviewer" />
 
                                                                             <select
                                                                                 id="reviewer_id"
@@ -371,18 +377,18 @@ export default function PaperPreview() {
                                                                                 </option>
                                                                                 {reviewers.map(reviewer => (
                                                                                     <option key={reviewer.id}
-                                                                                            value={reviewer.id}>
+                                                                                        value={reviewer.id}>
                                                                                         {reviewer.name}
                                                                                     </option>
                                                                                 ))}
                                                                             </select>
 
                                                                             <InputError message={errors.reviewer_id}
-                                                                                        className="mt-2"/>
+                                                                                className="mt-2" />
                                                                         </div>
 
                                                                         <PrimaryButton className="mt-4"
-                                                                                       disabled={processing}>
+                                                                            disabled={processing}>
                                                                             Submit
                                                                         </PrimaryButton>
                                                                     </form>
@@ -420,7 +426,7 @@ export default function PaperPreview() {
                                                 className="inline-flex items-center mr-3 text-sm text-gray-900 dark:text-white">
                                                 <div>
                                                     <a href="#" rel="author"
-                                                       className="text-xl font-bold text-gray-900 dark:text-white">
+                                                        className="text-xl font-bold text-gray-900 dark:text-white">
                                                         {paper.author ? paper.author.user.name : 'Unknown'}
                                                     </a>
 
@@ -437,7 +443,7 @@ export default function PaperPreview() {
                                                     {paper.classifications && paper.classifications.length > 0 && (
                                                         <p className="text-sm text-gray-500 dark:text-gray-400 italic">
                                                             Classifications: <span
-                                                            className="font-thin">{paper.classifications.map((c) => c.name).join(', ')}</span>
+                                                                className="font-thin">{paper.classifications.map((c) => c.name).join(', ')}</span>
                                                         </p>
                                                     )}
 
@@ -465,7 +471,7 @@ export default function PaperPreview() {
                                             className="text-blue-600 hover:text-blue-800"
                                             title="Download DOCX"
                                         >
-                                            <FontAwesomeIcon icon={faFileWord} size="2x"/>
+                                            <FontAwesomeIcon icon={faFileWord} size="2x" />
                                         </a>
 
                                         {/* Download PDF */}
@@ -474,7 +480,7 @@ export default function PaperPreview() {
                                             className="text-red-600 hover:text-red-800"
                                             title="Download PDF"
                                         >
-                                            <FontAwesomeIcon icon={faFilePdf} size="2x"/>
+                                            <FontAwesomeIcon icon={faFilePdf} size="2x" />
                                         </a>
 
                                         {/* Download ZIP */}
@@ -483,7 +489,7 @@ export default function PaperPreview() {
                                             className="text-yellow-600 hover:text-yellow-800"
                                             title="Download ZIP"
                                         >
-                                            <FontAwesomeIcon icon={faFileArchive} size="2x"/>
+                                            <FontAwesomeIcon icon={faFileArchive} size="2x" />
                                         </a>
                                     </div>
 
@@ -499,7 +505,7 @@ export default function PaperPreview() {
                                                                 </PrimaryButton>
                                                             </Link>
                                                         </>
-                                                    ):(
+                                                    ) : (
                                                         <>
                                                             {connectedReviewer.reviewerState === "Reviewed" ? (
                                                                 <>
@@ -509,7 +515,7 @@ export default function PaperPreview() {
                                                                 </>
                                                             ) : (
                                                                 <>
-                                                                <p className="mt-1 text-sm  text-red-700 italic underline">
+                                                                    <p className="mt-1 text-sm  text-red-700 italic underline">
                                                                         You Have Rejected the paper to review
                                                                     </p>
                                                                 </>
@@ -522,7 +528,7 @@ export default function PaperPreview() {
                                                 <>
                                                     <form className="max-w-full mx-auto m-5" onSubmit={submit2}>
                                                         <div className="mt-4">
-                                                            <InputLabel htmlFor="reviewerState" value="Select Your Choice"/>
+                                                            <InputLabel htmlFor="reviewerState" value="Select Your Choice" />
 
                                                             <select
                                                                 id="reviewerState"
@@ -537,7 +543,7 @@ export default function PaperPreview() {
 
                                                             </select>
 
-                                                            <InputError message={errors2.reviewerState} className="mt-2"/>
+                                                            <InputError message={errors2.reviewerState} className="mt-2" />
                                                         </div>
 
                                                         <PrimaryButton className="mt-4" disabled={processing}>
@@ -558,7 +564,7 @@ export default function PaperPreview() {
                                                             <Link href={`/papers/${paper.id}/review`}>
                                                                 <h2 className="mt-8 text-lg font-semibold text-green-700 dark:text-white">
                                                                     Your paper is reviewed for revision.
-                                                                    <FontAwesomeIcon icon={faEye} className="ml-2"/>
+                                                                    <FontAwesomeIcon icon={faEye} className="ml-2" />
                                                                 </h2>
                                                             </Link>
                                                             <Link href={`/papers/edit/${paper.id}`}>
@@ -571,7 +577,7 @@ export default function PaperPreview() {
                                                         <>
 
                                                         </>
-                                                        )
+                                                    )
                                                     }
 
                                                 </>

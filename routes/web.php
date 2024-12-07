@@ -59,8 +59,14 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/reviewerForm/{paper}', [ReviewerController::class, 'gotoReviewerForm'])->name('gotoReviewerForm')->middleware(ReviewerMiddleware::class);
     Route::post('/review', [ReviewerController::class, 'storeReview'])->name('storeReview')->middleware(ReviewerMiddleware::class);
+    
+    Route::get('/reviewer/accept/{reviewer_id}/{paper_id}', [ReviewerController::class, 'acceptReviewerState'])->name('reviewer.accept');
+    Route::get('/reviewer/decline/{reviewer_id}/{paper_id}', [ReviewerController::class, 'declineReviewerState'])->name('reviewer.decline');
     Route::post('/reviewerStateUpdate', [ReviewerController::class, 'updateReviewerState'])->name('updateReviewerState')->middleware(ReviewerMiddleware::class);
-
+    Route::get('/review-confirmation', function () {
+        return view('review-confirmation');
+    })->name('review-confirmation');
+    
 
     Route::get('/papers/{paper_id}/review', [ReviewController::class, 'showReviewPage'])->name('showReviewPage');
     Route::post('/statusChange', [PaperController::class, 'statusChange'])->name('statusChange');

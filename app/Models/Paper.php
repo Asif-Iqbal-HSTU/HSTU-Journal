@@ -33,7 +33,7 @@ class Paper extends Model
 
     public function connectedReviewer(): HasOne
     {
-        return $this->hasOne(Connectedreviewer::class);
+        return $this->HasOne(Connectedreviewer::class);
     }
 
     public function review(): HasOne

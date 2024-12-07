@@ -11,6 +11,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import Layout from "@/Layouts/Layout.jsx";
 
+import Select from 'react-select';
+
 export default function Login({ status, canResetPassword }) {
     const { data, setData, post, processing, errors, reset } = useForm({
         username: '',
@@ -20,6 +22,18 @@ export default function Login({ status, canResetPassword }) {
     });
 
     const [showPassword, setShowPassword] = useState(false);
+
+    const roleOptions = [
+        { value: '', label: 'Select role' },
+        { value: 'author', label: 'Author' },
+        { value: 'editor', label: 'Editor' },
+        { value: 'reviewer', label: 'Reviewer' },
+        { value: 'publisher', label: 'Publisher' },
+    ];
+
+    const handleRoleChange = (selectedOption) => {
+        setData('role', selectedOption.value);
+    };
 
     useEffect(() => {
         return () => {
@@ -89,6 +103,21 @@ export default function Login({ status, canResetPassword }) {
                             <InputError message={errors.role} className="mt-2"/>
                         </div>
 
+                        {/*<div className="mt-4">
+                            <InputLabel htmlFor="role" value="Log in as" />
+                            <Select
+                                id="role"
+                                name="role"
+                                value={roleOptions.find(option => option.value === data.role)}
+                                options={roleOptions}
+                                className="mt-1 block w-full rounded-md shadow-sm"
+                                onChange={handleRoleChange}
+                                isSearchable={true}
+                                placeholder="Select role"
+                            />
+                            <InputError message={errors.role} className="mt-2" />
+                        </div>*/}
+                        
                         <div className="mt-4">
                             <InputLabel htmlFor="password" value="Password"/>
 

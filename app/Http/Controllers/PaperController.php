@@ -22,7 +22,10 @@ class PaperController extends Controller
 {
     public function newManuscriptPage(): Response
     {
-        return Inertia::render('Paper/NewManuscript');
+        $reviewers = Reviewer::all(); 
+        return Inertia::render('Paper/NewManuscript', [
+            'reviewers' => $reviewers,
+        ]);
     }
 
     public function storePaper(Request $request): RedirectResponse
@@ -35,9 +38,9 @@ class PaperController extends Controller
         $imageFilePath = $this->uploadFile($request, $randomPaperID, 'zipFile', 'public/imageZip');
 
         $request->validate([
-            'paperID' => 'required',
-            'user_id' => 'required',
-            'status_id' => 'required',
+            // 'paperID' => 'required',
+            // 'user_id' => 'required',
+            // 'status_id' => 'required',
             'type' => 'required',
             'language_option' => 'required',
             'comments' => 'required',
@@ -187,8 +190,9 @@ class PaperController extends Controller
     {
 
         // Eager load the author and status for the paper
-//        $paper->load(['author.user', 'status']);
+    //    $paper->load(['author.user', 'status']);
         $paper = Paper::with(['status', 'author.user', 'coauthors', 'classifications', 'connectedReviewer.reviewer'])->where('id', $paper)->first(); // Eager load 'status', 'author', and 'user'
+        // $paper = Paper::with(['status', 'author.user', 'coauthors', 'classifications', 'connectedReviewers'])->where('id', $paper)->first(); // Eager load 'status', 'author', and 'user'
 //        $paper = Paper::where('id', $paper)->first(); // Eager load 'status', 'author', and 'user'
         //dd($paper);
 
