@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('paper_id')->constrained()->onDelete('cascade'); // Foreign key to users table
             $table->string('name');
+            $table->text('comment')->nullable();
             $table->timestamps();
         });
     }

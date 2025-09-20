@@ -1,6 +1,8 @@
-import {Head, Link, useForm, usePage} from '@inertiajs/react';
+import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import Layout from '@/Layouts/Layout.jsx';
 import dayjs from 'dayjs';
+import ReactStars from "react-rating-stars-component";
+
 
 // FontAwesome Icons
 import { faFileWord, faFilePdf, faFileArchive } from '@fortawesome/free-solid-svg-icons';
@@ -12,9 +14,9 @@ import PrimaryButton from "@/Components/PrimaryButton.jsx";
 import BackButton from "@/Components/BackButton.jsx";
 import TextArea from "@/Components/TextArea.jsx";
 import Modal from "@/Components/Modal.jsx";
-import {useState} from "react";
+import { useState } from "react";
 
-export default function PaperPreview() {
+export default function ReviewerForm() {
     const { paper, reviewers, connectedReviewer } = usePage().props;
     const user = usePage().props.auth.user;
 
@@ -24,6 +26,7 @@ export default function PaperPreview() {
 
     const { data, setData, post, processing, errors, reset } = useForm({
         paper_id: paper.id,
+        user_id: user.id,
         overallRecommendation: '',
         generalComments: '',
         detailedFeedback: '',
@@ -65,7 +68,7 @@ export default function PaperPreview() {
                 </h2>
             }
         >
-            <Head title="Reviewer Form"/>
+            <Head title="Reviewer Form" />
             <div className="container mx-auto py-12">
                 <div
                     className="bg-amber-50 max-w-4xl mx-auto p-6 dark:bg-gray-800/50 dark:bg-gradient-to-bl from-gray-700/50 via-transparent dark:ring-1 dark:ring-inset dark:ring-white/5 rounded-lg shadow-2xl shadow-gray-500/20"
@@ -139,7 +142,7 @@ export default function PaperPreview() {
                                         <InputError message={errors.detailedFeedback} className="mt-2" />
                                     </div>
 
-                                    <div className="mt-4">
+                                    {/* <div className="mt-4">
                                         <InputLabel htmlFor="bio" value="Critical Assessment" />
 
                                         <TextArea
@@ -151,6 +154,18 @@ export default function PaperPreview() {
                                             placeholder="Write Critical Assessment"
                                         />
 
+                                        <InputError message={errors.criticalAssessment} className="mt-2" />
+                                    </div> */}
+
+                                    <div className="mt-4">
+                                        <InputLabel htmlFor="criticalAssessment" value="Critical Assessment" />
+                                        <ReactStars
+                                            count={5}
+                                            onChange={(newValue) => setData('criticalAssessment', newValue)}
+                                            size={24}
+                                            activeColor="#ffd700"
+                                            value={data.criticalAssessment} // Controlled value
+                                        />
                                         <InputError message={errors.criticalAssessment} className="mt-2" />
                                     </div>
 

@@ -31,13 +31,18 @@ class Paper extends Model
         return $this->hasOne(Author::class);
     }
 
-    public function connectedReviewer(): HasOne
+    // public function connectedReviewer(): HasOne
+    // {
+    //     return $this->HasOne(Connectedreviewer::class);
+    // }
+    
+    public function connectedReviewers(): HasMany
     {
-        return $this->HasOne(Connectedreviewer::class);
+        return $this->hasMany(Connectedreviewer::class);
     }
 
-    public function review(): HasOne
+    public function reviews(): HasMany
     {
-        return $this->hasOne(Review::class);
+        return $this->hasMany(Review::class);
     }
 }

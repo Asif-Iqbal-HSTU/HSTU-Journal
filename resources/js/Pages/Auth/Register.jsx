@@ -126,6 +126,7 @@ export default function Register() {
                                 >
                                     <option value="">Select role</option>
                                     <option value="author">Author</option>
+                                    <option value="editor">Editor</option>
                                 </select>
 
                                 <InputError message={errors.role} className="mt-2" />

@@ -24,7 +24,7 @@ class DashboardController extends Controller
     {
 //        flash()->success('Author Login Success.');
 //        $userID = Auth::user()->id;
-        $papers = Paper::with(['status', 'author.user', 'coauthors', 'classifications', 'connectedReviewer.reviewer'])->get(); // Eager load 'status', 'author', and 'user'
+        $papers = Paper::with(['status', 'author.user', 'coauthors', 'classifications', 'connectedReviewers.reviewer'])->get(); // Eager load 'status', 'author', and 'user'
         return Inertia::render('Dashboards/Editor', [
             'papers' => $papers,
         ]);
@@ -33,7 +33,7 @@ class DashboardController extends Controller
     {
 //        flash()->success('Author Login Success.');
 //        $userID = Auth::user()->id;
-        $papers = Paper::with(['status', 'author.user', 'coauthors', 'classifications', 'connectedReviewer.reviewer'])->get(); // Eager load 'status', 'author', and 'user'
+        $papers = Paper::with(['status', 'author.user', 'coauthors', 'classifications', 'connectedReviewers.reviewer'])->get(); // Eager load 'status', 'author', and 'user'
         return Inertia::render('Dashboards/Reviewer', [
             'papers' => $papers,
         ]);

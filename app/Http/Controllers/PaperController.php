@@ -186,22 +186,23 @@ class PaperController extends Controller
         );
     }
 
-    public function show($paper)
+    public function show($p_id) 
     {
 
         // Eager load the author and status for the paper
     //    $paper->load(['author.user', 'status']);
-        $paper = Paper::with(['status', 'author.user', 'coauthors', 'classifications', 'connectedReviewer.reviewer'])->where('id', $paper)->first(); // Eager load 'status', 'author', and 'user'
-        // $paper = Paper::with(['status', 'author.user', 'coauthors', 'classifications', 'connectedReviewers'])->where('id', $paper)->first(); // Eager load 'status', 'author', and 'user'
+        // $paper = Paper::with(['status', 'author.user', 'coauthors', 'classifications', 'connectedReviewer.reviewer'])->where('id', $paper)->first(); // Eager load 'status', 'author', and 'user'
+        $paper = Paper::with(['status', 'author.user', 'coauthors', 'classifications', 'connectedReviewers.reviewer'])->where('id', $p_id)->first(); // Eager load 'status', 'author', and 'user'
 //        $paper = Paper::where('id', $paper)->first(); // Eager load 'status', 'author', and 'user'
         //dd($paper);
 
         $reviewers = Reviewer::all();
-        $paperReviewer = Connectedreviewer::where('paper_id', $paper)->first();
-        return Inertia::render('Paper/PaperPreview', [
+        $paperReviewers = Connectedreviewer::where('paper_id', $p_id)->get();
+        // $paperReviewers = Connectedreviewer::all();
+        return Inertia::render('Paper/PaperPreview2', [
             'paper' => $paper,
             'reviewers' => $reviewers,
-            'connectedReviewer' => $paper->connectedReviewer,
+            'paperReviewers' => $paperReviewers,
         ]);
     }
 
@@ -219,6 +220,7 @@ class PaperController extends Controller
     {
         $status = Status::where('paper_id', $request->paper_id)->first();
         $status->name = $request->name;
+        $status->comment = $request->comment;
         $status->save();
         return back();
     }
@@ -234,7 +236,8 @@ class PaperController extends Controller
 
     public function editSubmission($paper): Response
     {
-        $paper = Paper::with(['status', 'author.user', 'coauthors', 'classifications', 'connectedReviewer.reviewer'])->where('id', $paper)->first(); // Eager load 'status', 'author', and 'user'
+        // $paper = Paper::with(['status', 'author.user', 'coauthors', 'classifications', 'connectedReviewer.reviewer'])->where('id', $paper)->first(); // Eager load 'status', 'author', and 'user'
+        $paper = Paper::with(['status', 'author.user', 'coauthors', 'classifications', 'connectedReviewers'])->where('id', $paper)->first(); // Eager load 'status', 'author', and 'user'
 
         return Inertia::render('Paper/EditManuscript', [
             'paper' => $paper,

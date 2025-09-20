@@ -136,6 +136,80 @@ class ReviewerController extends Controller
         }
     }
 
+    public function connect2(Request $request): RedirectResponse
+    {
+        //dd($request);
+        $request->validate([
+            'reviewer_id' => 'required',
+            'paper_id' => 'required',
+        ]);
+
+        try {
+            $existingReviewer = Connectedreviewer::where('reviewer_id', $request->reviewer_id)
+                                     ->where('paper_id', $request->paper_id)
+                                     ->first();
+
+            if ($existingReviewer) {
+                // Delete the existing record
+                $existingReviewer->delete();
+            }
+
+            // Create a new Connectedreviewer record
+            Connectedreviewer::create([
+                'reviewer_id' => $request->reviewer_id,
+                'paper_id' => $request->paper_id,
+            ]);
+
+            $reviewer = Reviewer::where('id', $request->reviewer_id)->first();
+            $paper = Paper::with(['status', 'author.user', 'coauthors', 'classifications'])->where('id', $request->paper_id)->first();
+            $title = $paper->title;
+            $abstract = $paper->abstract;
+            $paper_id = $request->paper_id;
+            $reviewer_id = $request->reviewer_id;
+
+            $u = User::where('email', $reviewer->email)->first();
+            //dd($u->id);
+//            $rnd_str = Str::random(4); // Generates a random alphanumeric string of 8 characters
+//            $u_name = $reviewer->name . $rnd_str;
+            if($u == null)
+            {
+                //dd($u->id);
+                $rnd_str = Str::random(4); // Generates a random alphanumeric string of 8 characters
+                $u_name = $reviewer->name . $rnd_str;
+                $user = User::create([
+                    'name' => $reviewer->name,
+                    'username' => $u_name,
+                    'email' => $reviewer->email,
+                    'affiliation' => $reviewer->affiliation,
+                    'academicTitle' => $reviewer->academicTitle,
+                    'role' => 'reviewer',
+                    'password' => Hash::make($u_name),
+                ]);
+                $name = $user->name;
+                Mail::to($reviewer->email)->send(new ReviewerMail($title, $abstract, $u_name, $name, $paper_id, $reviewer_id));
+            }
+            else{
+                $u_name = $u->username;
+                $name = $u->name;
+                Mail::to($reviewer->email)->send(new ReviewerMail($title, $abstract, $u_name , $name, $paper_id, $reviewer_id));
+            }
+
+            $status = $paper->status;
+            //dd($status);
+            $status->name = "Approved";
+
+            $status->save();
+
+            return back();
+
+        } catch (\Exception $e) {
+            \Log::error('Mail sending failed: '.$e->getMessage());
+            flash()->error('Something is WRONG');
+
+            return back();
+        }
+    }
+
 //    public function gotoReviewerForm():Response
 //    {
 //        return Inertia::render('Paper/ReviewerForm');
@@ -143,7 +217,7 @@ class ReviewerController extends Controller
 
     public function gotoReviewerForm($paper)
     {
-        $paper = Paper::with(['status', 'author.user', 'coauthors', 'classifications', 'connectedReviewer.reviewer'])->where('id', $paper)->first();
+        $paper = Paper::with(['status', 'author.user', 'coauthors', 'classifications', 'connectedReviewers.reviewer'])->where('id', $paper)->first();
         return Inertia::render('Paper/ReviewerForm', [
             'paper' => $paper,
         ]);
@@ -153,6 +227,7 @@ class ReviewerController extends Controller
     {
         $request->validate([
             'paper_id' => 'required',
+            'user_id' => 'required',
             'overallRecommendation' => 'required',
             'generalComments' => 'required',
             'detailedFeedback' => 'required',
@@ -168,8 +243,14 @@ class ReviewerController extends Controller
             'completionTimeframe' => 'required',
         ]);
 
+        $user = User::where('id', $request->user_id)->first();
+        $user_email = $user->email;
+        $reviewer = Reviewer::where('email', $user_email)->first();
+        $r_id = $reviewer->id;
+
         Review::create([
             'paper_id' => $request->paper_id,
+            'user_id' => $request->user_id,
             'overallRecommendation' => $request->overallRecommendation,
             'generalComments' => $request->generalComments,
             'detailedFeedback' => $request->detailedFeedback,
@@ -186,7 +267,12 @@ class ReviewerController extends Controller
             'completionTimeframe' => $request->completionTimeframe,
         ]);
 
-        $c_r = Connectedreviewer::where('paper_id', $request->paper_id)->first();
+        // $user = User::where('id', $request->user_id)->first();
+        // $user_email = $user->email;
+        // $reviewer = Reviewer::where('email', $user_email)->first();
+        // $r_id = $reviewer->id;
+
+        $c_r = Connectedreviewer::where('paper_id', $request->paper_id)->where('reviewer_id', $r_id)->first();
         $c_r->reviewerState = 'Reviewed';
         $c_r->save();
 

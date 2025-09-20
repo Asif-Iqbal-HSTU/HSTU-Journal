@@ -11,8 +11,8 @@ class Reviewer extends Model
     use HasFactory;
     protected $guarded = ['created_at','updated_at'];
 
-    public function paper(): BelongsTo
-    {
-        return $this->belongsTo(Paper::class);
-    }
+    // public function paper(): BelongsTo
+    // {
+    //     return $this->belongsTo(Paper::class);
+    // }
 }

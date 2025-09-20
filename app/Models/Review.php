@@ -15,4 +15,10 @@ class Review extends Model
     {
         return $this->belongsTo(Paper::class);
     }
+
+    // Define the relationship to the User model
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
 }

@@ -25,44 +25,39 @@ export default function ReviewerDashboard() {
                                 Papers to Review
                             </h2>
                             <p className="text-sm text-gray-900">
-                                Here is a list of papers You have to check
+                                Here is a list of papers you have to review:
                             </p>
                             <hr className="h-px my-2 bg-green-300 border-0 dark:bg-gray-700" />
                             <div className="mt-5">
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 flex justify-center">
                                     {papers
                                         .filter(
-                                            (paper) => paper.status && paper.status.name === "Approved"
-                                        ) // Filter papers with status "Approved"
-                                        .filter(
                                             (paper) =>
-                                                paper.connected_reviewer &&
-                                                paper.connected_reviewer.reviewer &&
-                                                paper.connected_reviewer.reviewer.email === user.email
-                                        ) // Filter papers where connected reviewer email matches the user's email
+                                                paper.status &&
+                                                paper.status.name === "Approved"
+                                        ) // Filter papers with status "Approved"
+                                        .filter((paper) =>
+                                            paper.connected_reviewers.some(
+                                                (connectedReviewer) =>
+                                                    connectedReviewer.reviewer &&
+                                                    connectedReviewer.reviewer.email === user.email
+                                            )
+                                        ) // Check if the logged-in user is a reviewer for this paper
                                         .map((paper) => {
                                             const authorName =
                                                 paper.author && paper.author.user
                                                     ? paper.author.user.name
                                                     : "Unknown Author";
 
-                                            const reviewerName =
-                                                paper.connected_reviewer &&
-                                                paper.connected_reviewer.reviewer &&
-                                                paper.connected_reviewer.reviewer.email
-                                                    ? paper.connected_reviewer.reviewer.email
-                                                    : "Unknown";
-
                                             return (
                                                 <PaperCard
                                                     key={paper.id}
                                                     paper={paper}
                                                     paperStatus={paper.status.name}
-                                                    reviewer={reviewerName}
+                                                    authorName={authorName}
                                                 />
                                             );
                                         })}
-
                                 </div>
                             </div>
                         </div>

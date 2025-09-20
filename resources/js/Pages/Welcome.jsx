@@ -46,7 +46,7 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
 
                 <div className="max-w-7xl mx-auto p-6 lg:p-8">
                     <div className="flex justify-center">
-                        <img src="./images/logo.png" alt="Description of the image" height={50} width={150} />
+                        <img src="./images/BAUST logo.png" alt="BAUST logo" height={50} width={150} />
                     </div>
                     <div className="mt-16">
                         <div className="grid grid-cols-1 md:grid-cols-1 gap-6 lg:gap-8 flex justify-center">
@@ -57,11 +57,11 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                                     </div>
 
                                     <h2 className="mt-6 text-xl font-semibold text-gray-900 dark:text-white">
-                                        ScholarlyFlow
+                                        BAUST Journal
                                     </h2>
 
                                     <p className="mt-4 text-gray-500 dark:text-gray-400 text-sm leading-relaxed">
-                                        Welcome to ScholarlyFlow – your seamless solution for academic journal management. Our platform empowers authors, editors, and reviewers to collaborate efficiently and transparently. Authors can easily submit their manuscripts and track the status of their submissions. Editors can assign reviewers, manage feedback, and make informed decisions on submissions. Reviewers can access their allocated papers and provide detailed feedback effortlessly. ScholarlyFlow ensures a streamlined, user-friendly experience for the entire academic publishing process. Join us in advancing academic excellence with ScholarlyFlow.
+                                        Welcome to BAUST Journal – your seamless solution for academic journal management. Our platform empowers authors, editors, and reviewers to collaborate efficiently and transparently. Authors can easily submit their manuscripts and track the status of their submissions. Editors can assign reviewers, manage feedback, and make informed decisions on submissions. Reviewers can access their allocated papers and provide detailed feedback effortlessly. BAUST Journal ensures a streamlined, user-friendly experience for the entire academic publishing process. Join us in advancing academic excellence with BAUST Journal .
                                     </p>
                                     <div className="flex items-center gap-4 mt-4">
                                         {auth.user ? (

@@ -24,12 +24,12 @@ export default function Layout({ user, header, children }) {
     return (
         <>
             <nav className="bg-white border-b border-gray-200 dark:bg-gray-900">
-                <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+                <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto py-6 px-4">
                     {/* Left side: Logo */}
                     <Link href="/" className="flex items-center space-x-3 rtl:space-x-reverse">
-                        <img src="/images/logo.png" className="h-8" alt="HSTU Logo"/>
+                        <img src="/images/BAUST logo.png" className="h-8" alt="BAUST Logo"/>
                         <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
-                             HSTU Journal
+                             BAUST Journal
                         </span>
                     </Link>
 

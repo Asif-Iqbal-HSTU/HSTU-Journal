@@ -114,7 +114,21 @@ export default function EditManuscript() {
 
     const prevStep = () => setCurrentStep((prev) => Math.max(prev - 1, 1));
 
-    const classifications = ['Category A', 'Category B', 'Category C'];
+    const classifications = [
+        "Computer Science & Engineering",
+        "Electrical & Electronic Engineering",
+        "Civil Engineering",
+        "Mechanical Engineering",
+        "Architecture",
+        "Physics",
+        "Chemistry",
+        "Mathematics",
+        "English Language & Literature",
+        "Sociology",
+        "Political Science",
+        "Philosophy",
+        "History"
+    ];
 
     const handleInputChange = (field, value) => {
         if (field === 'classification') {
@@ -202,8 +216,13 @@ export default function EditManuscript() {
                                 className="border rounded w-full py-2 px-3 mt-2"
                             >
                                 <option value="">Select Article Type</option>
-                                <option value="abc">abc</option>
-                                <option value="def">def</option>
+                                <option value="Research Article">Research Article</option>
+                                <option value="Review Article">Review Article</option>
+                                <option value="Case Study">Case Study</option>
+                                <option value="Technical Note">Technical Note</option>
+                                <option value="Conference Paper">Conference Paper</option>
+                                <option value="Book Review">Book Review</option>
+                                <option value="Dataset Description">Dataset Description</option>
                             </select>
                             {errors.type && <p className="text-red-500">{errors.type}</p>}
                         </div>
@@ -459,22 +478,22 @@ export default function EditManuscript() {
                     <div>
                         <h2 className="text-lg font-medium">Confirmation</h2>
                         <div>
-                            <p>Type: {data.type}</p>
-                            <p>Title: {data.title}</p>
-                            <p>Abstract: {data.abstract}</p>
-                            <p>Keywords: {data.keywords}</p>
-
-                            {/* Display classification names */}
-                            <p>
-                                Classifications:{" "}
-                                {data.classification
-                                    .map((item) => item.name)
-                                    .join(', ')}
+                            <p className="font-semibold underline">Type: </p>
+                            <p>{data.type}</p>
+                            <p className="mt-2 font-semibold underline">Title: </p>
+                            <p>{data.title}</p>
+                            <p className="mt-2 font-semibold underline">Abstract: </p>
+                            <p>{data.abstract}</p>
+                            <p className="mt-2 font-semibold underline">Keywords: </p>
+                            <p>{data.keywords}</p>
+                            <p className="mt-2 font-semibold underline">Classifications: </p>
+                            <p>{data.classification.join(', ')}</p>
+                            {/*<p>Co-Authors: {JSON.stringify(data.coAuthors, null, 2)}</p>*/}
+                            <p className="mt-2 font-semibold underline">
+                                Co-Authors:
                             </p>
-
-                            {/* Display co-author names */}
                             <p>
-                                Co-Authors:{" "}
+                                {" "}
                                 {data.coAuthors
                                     .map((author) => author.name)
                                     .join(', ')}
