@@ -1,18 +1,20 @@
 import { Head, Link, router, useForm, usePage } from '@inertiajs/react';
 import Layout from '@/Layouts/Layout.jsx';
 import dayjs from 'dayjs';
-
-// FontAwesome Icons
 import { faFileWord, faFilePdf, faFileArchive, faEye } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import InputLabel from "@/Components/InputLabel.jsx";
 import TextInput from "@/Components/TextInput.jsx";
 import InputError from "@/Components/InputError.jsx";
 import PrimaryButton from "@/Components/PrimaryButton.jsx";
+import {useState} from "react";
+import Modal from "@/Components/Modal.jsx";
+import axios from 'axios';
 
 export default function PaperPreview() {
     const { paper, reviewers, connectedReviewer } = usePage().props;
     const user = usePage().props.auth.user;
+    const [noFileModal, setNoFileModal] = useState(false);
 
     const { data, setData, post, processing, errors, reset } = useForm({
         reviewer_id: '',
@@ -42,6 +44,29 @@ export default function PaperPreview() {
     }
 
     const { data: data3, setData: setData3, post: post3, processing: processing3, errors: errors3, reset: reset3 } = useForm(initialData3);
+
+    /*const handleDownload = (file, url) => {
+        if (!file) {
+            setNoFileModal(true);
+        } else {
+            window.location.href = url;
+        }
+    };*/
+
+    const handleDownload = (file, url) => {
+        if (!file) {
+            setNoFileModal(true);
+            return;
+        }
+
+        axios.head(url)
+            .then(() => {
+                window.location.href = url;
+            })
+            .catch(() => {
+                setNoFileModal(true);
+            });
+    };
 
 
     const submit = (e) => {
@@ -160,8 +185,8 @@ export default function PaperPreview() {
                                             </p>
 
                                             {/* Download buttons for DOCX, PDF, and ZIP */}
-                                            <div className="flex space-x-4 mt-4">
-                                                {/* Download DOCX */}
+                                            {/*<div className="flex space-x-4 mt-4">
+                                                 Download DOCX
                                                 <a
                                                     href={`/papers/${paper.id}/download-docx`}
                                                     className="text-blue-600 hover:text-blue-800"
@@ -170,7 +195,7 @@ export default function PaperPreview() {
                                                     <FontAwesomeIcon icon={faFileWord} size="2x" />
                                                 </a>
 
-                                                {/* Download PDF */}
+                                                 Download PDF
                                                 <a
                                                     href={`/papers/${paper.id}/download-pdf`}
                                                     className="text-red-600 hover:text-red-800"
@@ -179,7 +204,7 @@ export default function PaperPreview() {
                                                     <FontAwesomeIcon icon={faFilePdf} size="2x" />
                                                 </a>
 
-                                                {/* Download ZIP */}
+                                                 Download ZIP
                                                 <a
                                                     href={`/papers/${paper.id}/download-zip`}
                                                     className="text-yellow-600 hover:text-yellow-800"
@@ -187,7 +212,45 @@ export default function PaperPreview() {
                                                 >
                                                     <FontAwesomeIcon icon={faFileArchive} size="2x" />
                                                 </a>
-                                            </div>
+                                            </div>*/}
+
+                                            {/* Download DOCX */}
+                                            {paper.docFile && (
+                                                <button
+                                                    onClick={() => handleDownload(`/papers/${paper.id}/download-docx`)}
+                                                    className="text-blue-600 hover:text-blue-800"
+                                                >
+                                                    <FontAwesomeIcon icon={faFileWord} size="2x" />
+                                                </button>
+                                            )}
+
+                                            {/* Download PDF */}
+                                            {paper.pdfFile && (
+                                                <button
+                                                    onClick={() => handleDownload(`/papers/${paper.id}/download-pdf`)}
+                                                    className="text-yellow-300 hover:text-red-800"
+                                                >
+                                                    <FontAwesomeIcon icon={faFilePdf} size="2x" />
+                                                </button>
+                                            )}
+
+                                            {/* Download ZIP */}
+                                            {paper.zipFile && (
+                                                <button
+                                                    onClick={() => handleDownload(`/papers/${paper.id}/download-zip`)}
+                                                    className="text-yellow-600 hover:text-yellow-800"
+                                                >
+                                                    <FontAwesomeIcon icon={faFileArchive} size="2x" />
+                                                </button>
+                                            )}
+
+                                            <Modal show={noFileModal} onClose={() => setNoFileModal(false)}>
+                                                <div className="p-6 text-center">
+                                                    <h2 className="text-xl font-bold">No File Attached</h2>
+                                                    <p className="mt-2">There is no file available for download.</p>
+                                                </div>
+                                            </Modal>
+
                                         </article>
                                     </div>
                                 </main>
@@ -203,7 +266,7 @@ export default function PaperPreview() {
                                 {/* If paperReviewer is present (i.e., not null), display the reviewer name */}
                                 {paper.status.name === "Approved" ? (
                                     <>
-                                        <div> 
+                                        <div>
                                             <h2 className="mt-8 text-lg font-semibold text-gray-900 dark:text-white">
                                                 {/* This paper is distributed to a reviewer. {connectedReviewer.reviewer.name} */}
                                                 This paper is distributed to
@@ -470,34 +533,41 @@ export default function PaperPreview() {
                                     </p>
 
                                     {/* Download buttons for DOCX, PDF, and ZIP */}
-                                    <div className="flex space-x-4 mt-4">
-                                        {/* Download DOCX */}
-                                        <a
-                                            href={`/papers/${paper.id}/download-docx`}
+                                    {paper.docFile && (
+                                        <button
+                                            onClick={() => handleDownload(`/papers/${paper.id}/download-docx`)}
                                             className="text-blue-600 hover:text-blue-800"
-                                            title="Download DOCX"
                                         >
                                             <FontAwesomeIcon icon={faFileWord} size="2x" />
-                                        </a>
+                                        </button>
+                                    )}
 
-                                        {/* Download PDF */}
-                                        <a
-                                            href={`/papers/${paper.id}/download-pdf`}
-                                            className="text-red-600 hover:text-red-800"
-                                            title="Download PDF"
+                                    {/* Download PDF */}
+                                    {paper.pdfFile && (
+                                        <button
+                                            onClick={() => handleDownload(`/papers/${paper.id}/download-pdf`)}
+                                            className="text-yellow-300 hover:text-red-800"
                                         >
                                             <FontAwesomeIcon icon={faFilePdf} size="2x" />
-                                        </a>
+                                        </button>
+                                    )}
 
-                                        {/* Download ZIP */}
-                                        <a
-                                            href={`/papers/${paper.id}/download-zip`}
+                                    {/* Download ZIP */}
+                                    {paper.zipFile && (
+                                        <button
+                                            onClick={() => handleDownload(`/papers/${paper.id}/download-zip`)}
                                             className="text-yellow-600 hover:text-yellow-800"
-                                            title="Download ZIP"
                                         >
                                             <FontAwesomeIcon icon={faFileArchive} size="2x" />
-                                        </a>
-                                    </div>
+                                        </button>
+                                    )}
+
+                                    <Modal show={noFileModal} onClose={() => setNoFileModal(false)}>
+                                        <div className="p-6 text-center">
+                                            <h2 className="text-xl font-bold">No File Attached</h2>
+                                            <p className="mt-2">There is no file available for download.</p>
+                                        </div>
+                                    </Modal>
 
                                     {user.role === 'reviewer' ? (
                                         <>
@@ -604,6 +674,7 @@ export default function PaperPreview() {
                     </div>
                 )}
             </div>
+
         </Layout>
     );
 }

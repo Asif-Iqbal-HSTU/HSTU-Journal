@@ -24,7 +24,7 @@ return new class extends Migration
             $table->string('password');
             $table->string('fieldOFStudy')->nullable();
             $table->string('researchInterest')->nullable();
-            $table->string('ORCIDiD')->nullable();
+            $table->string('orcid_id')->nullable();
             $table->string('role');
             $table->rememberToken();
             $table->timestamps();

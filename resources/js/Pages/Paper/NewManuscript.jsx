@@ -117,11 +117,14 @@ export default function NewManuscript() {
         "Physics",
         "Chemistry",
         "Mathematics",
-        "English Language & Literature",
+        "Language & Literature",
         "Sociology",
         "Political Science",
         "Philosophy",
-        "History"
+        "History",
+        "Law",
+        "Environment",
+        "Nano Technology",
     ];
 
     const handleInputChange = (field, value) => {
@@ -207,10 +210,11 @@ export default function NewManuscript() {
                                 <option value="Research Article">Research Article</option>
                                 <option value="Review Article">Review Article</option>
                                 <option value="Case Study">Case Study</option>
-                                <option value="Technical Note">Technical Note</option>
+                                <option value="Others">Others</option>
+                                {/*<option value="Technical Note">Technical Note</option>
                                 <option value="Conference Paper">Conference Paper</option>
                                 <option value="Book Review">Book Review</option>
-                                <option value="Dataset Description">Dataset Description</option>
+                                <option value="Dataset Description">Dataset Description</option>*/}
                             </select>
                             {errors.type && <p className="text-red-500">{errors.type}</p>}
                         </div>
@@ -250,7 +254,7 @@ export default function NewManuscript() {
                                 type="text"
                                 value={data.title}
                                 onChange={(e) => handleInputChange('title', e.target.value)}
-                                className="border rounded w-full py-2 px-3"
+                                className="border rounded w-full py-2 px-3 mt-2"
                             />
                             {errors.title && <p className="text-red-500">{errors.title}</p>}
                         </div>
@@ -259,19 +263,20 @@ export default function NewManuscript() {
                             <textarea
                                 value={data.abstract}
                                 onChange={(e) => handleInputChange('abstract', e.target.value)}
-                                className="border rounded w-full py-2 px-3"
+                                className="border rounded w-full py-2 px-3 mt-2"
                                 rows="4"  // Controls height
                             />
                             {errors.abstract && <p className="text-red-500">{errors.abstract}</p>}
                         </div>
 
                         <div className="mb-4">
-                            <label>Keywords</label>
+                            <label>Keywords (Comma Separated)</label>
                             <input
                                 type="text"
                                 value={data.keywords}
                                 onChange={(e) => handleInputChange('keywords', e.target.value)}
-                                className="border rounded w-full py-2 px-3"
+                                className="border rounded w-full py-2 px-3 mt-2"
+                                placeholder="Example: ML, Deep Learning"
                             />
                             {errors.keywords && <p className="text-red-500">{errors.keywords}</p>}
                         </div>
@@ -293,26 +298,40 @@ export default function NewManuscript() {
                                 type="number"
                                 value={coAuthorCount}
                                 onChange={(e) => setCoAuthorCount(Number(e.target.value))}
-                                className="border rounded w-full py-2 px-3"
+                                className="border rounded w-full py-2 px-3 mt-1"
                                 min={0}
                             />
                         </div>
                         {Array.from({ length: coAuthorCount }).map((_, index) => (
-                            <div key={index} className="mb-4">
-                                <h3 className="font-medium">Co-Author {index + 1}</h3>
+                            <div key={index} className="mb-4 bg-amber-50 shadow-2xl rounded-2xl p-6">
+                                <h3 className="font-medium text-green-600 text-center">Co-Author {index + 1}</h3>
                                 <label>Name</label>
                                 <input
                                     type="text"
                                     value={data.coAuthors[index]?.name || ''}
                                     onChange={(e) => handleCoAuthorChange(index, 'name', e.target.value)}
-                                    className="border rounded w-full py-2 px-3"
+                                    className="border rounded w-full py-2 px-3 mt-1 mb-2"
                                 />
                                 <label>Email</label>
                                 <input
                                     type="email"
                                     value={data.coAuthors[index]?.email || ''}
                                     onChange={(e) => handleCoAuthorChange(index, 'email', e.target.value)}
-                                    className="border rounded w-full py-2 px-3"
+                                    className="border rounded w-full py-2 px-3 mt-1 mb-2"
+                                />
+                                <label>Affiliation</label>
+                                <input
+                                    type="text"
+                                    value={data.coAuthors[index]?.affiliation || ''}
+                                    onChange={(e) => handleCoAuthorChange(index, 'affiliation', e.target.value)}
+                                    className="border rounded w-full py-2 px-3 mt-1 mb-2"
+                                />
+                                <label>ORCID iD (optional)</label>
+                                <input
+                                    type="text"
+                                    value={data.coAuthors[index]?.orcid_id || ''}
+                                    onChange={(e) => handleCoAuthorChange(index, 'orcid_id', e.target.value)}
+                                    className="border rounded w-full py-2 px-3 mt-1 mb-2"
                                 />
                             </div>
                         ))}
@@ -328,7 +347,7 @@ export default function NewManuscript() {
                                 type="file"
                                 accept=".docx"
                                 onChange={(e) => handleFileChange('docFile', e.target.files[0])}
-                                className="border rounded w-full py-2 px-3"
+                                className="border rounded w-full py-2 px-3 mt-1 mb-2"
                             />
                             {errors.docFile && <p className="text-red-500">{errors.docFile}</p>}
                         </div>
@@ -338,17 +357,17 @@ export default function NewManuscript() {
                                 type="file"
                                 accept=".pdf"
                                 onChange={(e) => handleFileChange('pdfFile', e.target.files[0])}
-                                className="border rounded w-full py-2 px-3"
+                                className="border rounded w-full py-2 px-3 mt-1 mb-2"
                             />
                             {errors.pdfFile && <p className="text-red-500">{errors.pdfFile}</p>}
                         </div>
                         <div className="mb-4">
-                            <label>Zip File</label>
+                            <label>Supplementary Zip File (Images, Tables etc.)</label>
                             <input
                                 type="file"
                                 accept=".zip,.rar"
                                 onChange={(e) => handleFileChange('zipFile', e.target.files[0])}
-                                className="border rounded w-full py-2 px-3"
+                                className="border rounded w-full py-2 px-3 mt-1 mb-2"
                             />
                             {errors.zipFile && <p className="text-red-500">{errors.zipFile}</p>}
                         </div>
@@ -357,7 +376,7 @@ export default function NewManuscript() {
             case 6:
                 return (
                     <div>
-                        <h1 className="text-2xl font-bold mb-8">Funding Info</h1>
+                        <h1 className="text-2xl font-bold mb-8">Funding Info & Agreement</h1>
 
                         <div className="mb-4">
                             <label>Funding Information</label>
@@ -401,7 +420,7 @@ export default function NewManuscript() {
                                     className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
                                 />
                                 <label htmlFor='consentToPolicies' className="ms-2 text-sm font-medium text-gray-900">
-                                    I agree to the journal's submission policies, including copyright agreements, ethical guidelines, and any specific requirements
+                                    I agree to the journal's submission policies, including copyright agreements, ethical guidelines, and any specific requirements. I also agree to share the dataset I have used.
                                 </label>
                             </div>
 
@@ -431,7 +450,7 @@ export default function NewManuscript() {
                     </div>
 
                 );
-            case 8:
+            /*case 8:
                 return (
                     <div>
                         <h1 className="text-2xl font-bold mb-8">Reviewers</h1>
@@ -450,7 +469,7 @@ export default function NewManuscript() {
                             <p className="mt-1 text-sm">Here is a List of Existing Reviewer Here</p>
                             <hr className="h-px my-2 bg-green-300 border-0 dark:bg-gray-700" />
 
-                            {/* Search Bar */}
+                            {/!* Search Bar *!/}
                             <div className="mb-4">
                                 <TextInput
                                     id="search"
@@ -462,7 +481,7 @@ export default function NewManuscript() {
                                 />
                             </div>
 
-                            {/* Scrollable Reviewer List */}
+                            {/!* Scrollable Reviewer List *!/}
                             <div className="max-h-64 overflow-y-auto">
                                 {filteredReviewers.map((reviewer) => (
                                     <ReviewerCard key={reviewer.id} reviewer={reviewer} />
@@ -472,8 +491,8 @@ export default function NewManuscript() {
                         </div>
                     </div>
 
-                );
-            case 9:
+                );*/
+            case 8:
                 return (
                     <div>
                         <h1 className="text-2xl font-bold mb-8">Comments</h1>
@@ -491,7 +510,7 @@ export default function NewManuscript() {
                     </div>
 
                 );
-            case 10:
+            case 9:
                 return (
                     <div>
                         <h1 className="text-2xl font-bold mb-8">Confirmation</h1>

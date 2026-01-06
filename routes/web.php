@@ -51,6 +51,7 @@ Route::middleware('auth')->group(function () {
 
 // Route for downloading the PDF file
     Route::get('/papers/{id}/download-pdf', [PaperController::class, 'downloadPdfFile'])->name('papers.download.pdf');
+    Route::get('/papers/{id}/download-zip', [PaperController::class, 'downloadZipFile'])->name('papers.download.zip');
 
 // Route for downloading the ZIP file
     Route::get('/reviewerlist', [ReviewerController::class, 'gotoReviewerPageForAuthor'])->name('gotoReviewerPageForAuthor')->middleware(AuthorMiddleware::class);
@@ -59,19 +60,19 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/reviewerForm/{paper}', [ReviewerController::class, 'gotoReviewerForm'])->name('gotoReviewerForm')->middleware(ReviewerMiddleware::class);
     Route::post('/review', [ReviewerController::class, 'storeReview'])->name('storeReview')->middleware(ReviewerMiddleware::class);
-    
+
     Route::post('/reviewerStateUpdate', [ReviewerController::class, 'updateReviewerState'])->name('updateReviewerState')->middleware(ReviewerMiddleware::class);
     Route::get('/review-confirmation', function () {
         return view('review-confirmation');
     })->name('review-confirmation');
-    
+
 
     Route::get('/papers/{paper_id}/review', [ReviewController::class, 'showReviewPage'])->name('showReviewPage');
     Route::post('/statusChange', [PaperController::class, 'statusChange'])->name('statusChange');
 
     Route::get('/papers/edit/{paper_id}', [PaperController::class, 'editSubmission'])->name('editSubmission')->middleware(AuthorMiddleware::class);
     Route::post('/paper/update/{paper_id}', [PaperController::class, 'updatePaper'])->name('updatePaper')->middleware(AuthorMiddleware::class);
-    
+
 
 });
 

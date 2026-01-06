@@ -177,6 +177,7 @@ export default function PaperPreview() {
                                             {/* Download buttons for DOCX, PDF, and ZIP */}
                                             <div className="flex space-x-4 mt-4">
                                                 {/* Download DOCX */}
+                                                {paper.docFile && (
                                                 <a
                                                     href={`/papers/${paper.id}/download-docx`}
                                                     className="text-blue-600 hover:text-blue-800"
@@ -184,8 +185,10 @@ export default function PaperPreview() {
                                                 >
                                                     <FontAwesomeIcon icon={faFileWord} size="2x" />
                                                 </a>
+                                                )}
 
                                                 {/* Download PDF */}
+                                                {paper.pdfFile && (
                                                 <a
                                                     href={`/papers/${paper.id}/download-pdf`}
                                                     className="text-red-600 hover:text-red-800"
@@ -193,8 +196,10 @@ export default function PaperPreview() {
                                                 >
                                                     <FontAwesomeIcon icon={faFilePdf} size="2x" />
                                                 </a>
+                                                )}
 
                                                 {/* Download ZIP */}
+                                                {paper.pdfFile && (
                                                 <a
                                                     href={`/papers/${paper.id}/download-zip`}
                                                     className="text-yellow-600 hover:text-yellow-800"
@@ -202,6 +207,7 @@ export default function PaperPreview() {
                                                 >
                                                     <FontAwesomeIcon icon={faFileArchive} size="2x" />
                                                 </a>
+                                                )}
                                             </div>
                                         </article>
                                     </div>

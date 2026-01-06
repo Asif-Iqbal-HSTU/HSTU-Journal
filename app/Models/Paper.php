@@ -20,6 +20,10 @@ class Paper extends Model
     {
         return $this->hasMany(Classification::class);
     }
+    public function keywords(): HasMany
+    {
+        return $this->hasMany(Keyword::class);
+    }
 
     public function status(): HasOne
     {
@@ -35,7 +39,7 @@ class Paper extends Model
     // {
     //     return $this->HasOne(Connectedreviewer::class);
     // }
-    
+
     public function connectedReviewers(): HasMany
     {
         return $this->hasMany(Connectedreviewer::class);

@@ -1,9 +1,13 @@
 import { useState } from 'react';
 import { Link, usePage } from '@inertiajs/react';
+import { faCircleQuestion } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
 
 export default function Layout({ user, header, children }) {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
+    const [showHelpModal, setShowHelpModal] = useState(false);
 
     const toggleMenu = () => {
         setIsMenuOpen(!isMenuOpen);
@@ -52,12 +56,12 @@ export default function Layout({ user, header, children }) {
                                                         New Manuscript
                                                     </Link>
                                                 </li>
-                                                <li>
+                                                {/*<li>
                                                     <Link href={route('gotoReviewerPageForAuthor')}
                                                           className={`${isActive('/reviewerlist') ? 'text-blue-700' : 'text-gray-900'} hover:text-blue-700`}>
                                                         Reviewer List
                                                     </Link>
-                                                </li>
+                                                </li>*/}
                                             </>
                                         )
                                         }
@@ -175,6 +179,40 @@ export default function Layout({ user, header, children }) {
                         }
 
                     </div>
+
+                    {/* Floating Help Button */}
+                    <button
+                        onClick={() => setShowHelpModal(true)}
+                        className="fixed bottom-20 right-20 bg-green-600 text-white px-5 py-3 rounded-xl shadow-xl hover:bg-green-700 transition z-50 flex items-center gap-2"
+                    >
+                        <FontAwesomeIcon icon={faCircleQuestion} size="lg" />
+                        <span className="font-medium">Need Help?</span>
+                    </button>
+
+
+
+                    {/* Help Modal */}
+                    {showHelpModal && (
+                        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                            <div className="bg-white w-80 p-6 rounded-lg shadow-lg">
+                                <h2 className="text-xl font-semibold mb-4 text-center">
+                                    Need Help?
+                                </h2>
+                                <p className="text-gray-700 text-center mb-6">
+                                    If you face any problem,<br />
+                                    feel free to call at<br />
+                                    <span className="font-bold">01725215111</span>
+                                </p>
+
+                                <button
+                                    onClick={() => setShowHelpModal(false)}
+                                    className="w-full py-2 bg-green-600 text-white rounded hover:bg-green-700"
+                                >
+                                    Close
+                                </button>
+                            </div>
+                        </div>
+                    )}
 
                     {/* Mobile menu button */}
                     <button

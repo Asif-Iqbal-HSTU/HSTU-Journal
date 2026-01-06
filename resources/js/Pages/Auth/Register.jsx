@@ -17,6 +17,9 @@ export default function Register() {
         phone: '',
         role: '',
         username: '',
+        affiliation: '',
+        academicTitle: '',
+        orcid_id: '',
         password: '',
         password_confirmation: '',
     });
@@ -126,10 +129,59 @@ export default function Register() {
                                 >
                                     <option value="">Select role</option>
                                     <option value="author">Author</option>
-                                    <option value="editor">Editor</option>
+                                    {/*<option value="editor">Editor</option>*/}
                                 </select>
 
                                 <InputError message={errors.role} className="mt-2" />
+                            </div>
+
+                            <div>
+                                <InputLabel htmlFor="affiliation" value="Affiliation" />
+
+                                <TextInput
+                                    id="affiliation"
+                                    name="affiliation"
+                                    value={data.affiliation}
+                                    className="mt-1 block w-full"
+                                    autoComplete="affiliation"
+                                    onChange={(e) => setData('affiliation', e.target.value)}
+                                    required
+                                />
+
+                                <InputError message={errors.affiliation} className="mt-2" />
+                            </div>
+
+
+                            <div>
+                                <InputLabel htmlFor="academicTitle" value="Academic Title" />
+
+                                <TextInput
+                                    id="academicTitle"
+                                    name="academicTitle"
+                                    value={data.academicTitle}
+                                    className="mt-1 block w-full"
+                                    autoComplete="academicTitle"
+                                    onChange={(e) => setData('academicTitle', e.target.value)}
+                                    required
+                                />
+
+                                <InputError message={errors.academicTitle} className="mt-2" />
+                            </div>
+
+
+                            <div>
+                                <InputLabel htmlFor="orcid_id" value="ORCID iD (Optional)" />
+
+                                <TextInput
+                                    id="orcid_id"
+                                    name="orcid_id"
+                                    value={data.orcid_id}
+                                    className="mt-1 block w-full"
+                                    autoComplete="orcid_id"
+                                    onChange={(e) => setData('orcid_id', e.target.value)}
+                                />
+
+                                <InputError message={errors.orcid_id} className="mt-2" />
                             </div>
 
                             <div>
