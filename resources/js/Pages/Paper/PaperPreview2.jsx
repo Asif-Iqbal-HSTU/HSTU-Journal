@@ -13,7 +13,8 @@ import PrimaryButton from "@/Components/PrimaryButton.jsx";
 export default function PaperPreview() {
     const { paper, reviewers, paperReviewers } = usePage().props;
     const user = usePage().props.auth.user;
-    console.log(paper);
+    console.log("ajaira");
+    console.log(paper.author.user.email);
 
     const { data, setData, post, processing, errors, reset } = useForm({
         reviewer_id: '',
@@ -137,9 +138,13 @@ export default function PaperPreview() {
                                                         className="inline-flex items-center mr-3 text-sm text-gray-900 dark:text-white">
                                                         <div>
                                                             <a href="#" rel="author"
-                                                                className="text-xl font-bold text-gray-900 dark:text-white">
+                                                               className="text-xl font-bold text-gray-900 dark:text-white">
                                                                 {paper.author ? paper.author.user.name : 'Unknown'}
                                                             </a>
+                                                            <div
+                                                                className="text-lg text-gray-900 dark:text-white">
+                                                                {paper.author ? paper.author.user.email : 'Unknown'}
+                                                            </div>
 
                                                             {paper.coauthors && paper.coauthors.length > 0 && (
                                                                 <p className="text-base text-gray-500 dark:text-gray-400">
@@ -532,6 +537,10 @@ export default function PaperPreview() {
                                                         className="text-xl font-bold text-gray-900 dark:text-white">
                                                         {paper.author ? paper.author.user.name : 'Unknown'}
                                                     </a>
+                                                    <div
+                                                        className="text-lg text-gray-900 dark:text-white">
+                                                        {paper.author ? paper.author.user.email : 'Unknown'}
+                                                    </div>
 
                                                     {paper.coauthors && paper.coauthors.length > 0 && (
                                                         <p className="text-base text-gray-500 dark:text-gray-400">

@@ -150,6 +150,10 @@ export default function PaperPreview() {
                                                                 className="text-xl font-bold text-gray-900 dark:text-white">
                                                                 {paper.author ? paper.author.user.name : 'Unknown'}
                                                             </a>
+                                                            <a href="#" rel="author"
+                                                                className="text-xl font-bold text-gray-900 dark:text-white">
+                                                                {paper.author ? paper.author.user.email : 'Unknown'}
+                                                            </a>
 
                                                             {paper.coauthors && paper.coauthors.length > 0 && (
                                                                 <p className="text-base text-gray-500 dark:text-gray-400">
