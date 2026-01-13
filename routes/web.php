@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BackIssueController;
 use App\Http\Controllers\PaperController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReviewController;
@@ -75,6 +76,16 @@ Route::middleware('auth')->group(function () {
 
 
 });
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/editor/back-issue-entry', [BackIssueController::class, 'create'])->name('backIssues.create');
+    Route::post('/editor/back-issue-entry', [BackIssueController::class, 'store']);
+});
+
+Route::get('/archive', [BackIssueController::class, 'index'])->name('backIssues.index');
+
+Route::get('/archive/papers/{paper}', [BackIssueController::class, 'show'])->name('viewPaper');
+Route::get('/archive/papers/{id}/download-pdf', [BackIssueController::class, 'downloadPdfFile'])->name('archive.papers.download.pdf');
 
 Route::get('/reviewer/accept/{reviewer_id}/{paper_id}', [ReviewerController::class, 'acceptReviewerState'])->name('reviewer.accept');
 Route::get('/reviewer/decline/{reviewer_id}/{paper_id}', [ReviewerController::class, 'declineReviewerState'])->name('reviewer.decline');

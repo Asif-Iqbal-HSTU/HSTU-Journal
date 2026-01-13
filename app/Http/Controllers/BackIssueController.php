@@ -1,0 +1,214 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Connectedreviewer;
+use App\Models\Paper;
+use App\Models\Author;
+use App\Models\Coauthor;
+use App\Models\Reviewer;
+use App\Models\Status;
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+use Inertia\Inertia;
+
+class BackIssueController extends Controller
+{
+    public function index(Request $request)
+    {
+        // Get filters from query parameters
+        $volume = $request->query('volume');
+        $year = $request->query('year');
+
+        $query = Paper::query()
+            ->where('is_published', 1) // Assuming 3 = Published/Accepted
+            ->orderBy('published_at', 'desc')
+            ->with(['author.user', 'coauthors']); // eager load authors
+
+        if ($volume) {
+            $query->where('volume', $volume);
+        }
+
+        if ($year) {
+            $query->whereYear('published_at', $year);
+        }
+
+        $papers = $query->paginate(12)->withQueryString(); // Pagination, 12 per page
+
+        // Get distinct volumes and years for filter dropdowns
+        $volumes = Paper::select('volume')->distinct()->orderBy('volume', 'desc')->pluck('volume');
+        $years = Paper::selectRaw('YEAR(published_at) as year')->distinct()->orderByDesc('year')->pluck('year');
+
+        return Inertia::render('BackIssues/Index', [
+            'backIssues' => $papers,
+            'volumes' => $volumes,
+            'years' => $years,
+            'filters' => [
+                'volume' => $volume,
+                'year' => $year,
+            ]
+        ]);
+    }
+
+    public function create()
+    {
+        return inertia('Editor/BackIssueEntry');
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'title' => 'required',
+            'abstract' => 'required',
+            'keywords' => 'required',
+            'pdfFile' => 'required|file|mimes:pdf',
+            'authors' => 'required|array|min:1',
+            'volume' => 'required',
+            'issue' => 'required',
+            'published_at' => 'required|date'
+        ]);
+
+        $paperID = 'BACK_' . Str::random(8);
+
+        // Store PDF
+        /*$pdfPath = $request->file('pdfFile')
+            ->storeAs('public/pdf', $paperID . '_' . $request->file('pdfFile')->getClientOriginalName());*/
+
+        $pdfPath = $this->uploadFile($request, $paperID, 'pdfFile', 'public/pdf');
+
+        $docPath = $pdfPath;
+
+        // Create Paper
+        $paper = Paper::create([
+            'paperID' => $paperID,
+            'user_id' => auth()->id(), // uploader
+            'type' => 'Back Issue',
+            'title' => $request->title,
+            'abstract' => $request->abstract,
+            'keywords' => $request->keywords,
+            'pdfFile' => $pdfPath,
+            'docFile' => $docPath, // ✅ added
+            'language_option' => 'N/A',
+            'comments' => 'Imported from previous issue',
+            'is_published' => true,
+            'published_at' => $request->published_at,
+            'volume' => $request->volume,
+            'issue' => $request->issue,
+            'doi' => $request->doi ?? null,
+        ]);
+
+        // Generate slug
+        $paper->slug = Str::slug($paper->title . '-' . $paper->id);
+        $paper->save();
+
+        $status = Status::create([
+            'paper_id' => $paper->id,
+            'name' => 'Published',
+            'comment' => 'From Back Issue',
+        ]);
+
+        // First author = main author
+        foreach ($request->authors as $index => $author) {
+
+            if ($index == 0) {
+                // create dummy user record if not exists
+                $user = \App\Models\User::firstOrCreate(
+                    ['email' => $author['email']],
+                    [
+                        'name' => $author['name'],
+                        'password' => bcrypt(Str::random(10)),
+                        'username' => Str::random(8),
+                        'role' => 'author'
+                    ]
+                );
+
+                Author::create([
+                    'paper_id' => $paper->id,
+                    'user_id' => $user->id
+                ]);
+            } else {
+                Coauthor::create([
+                    'paper_id' => $paper->id,
+                    'name' => $author['name'],
+                    'email' => $author['email'],
+                    'affiliation' => $author['affiliation'],
+                    'orcid_id' => $author['orcid'] ?? null
+                ]);
+            }
+        }
+
+        return back()->with('success','Back issue article added successfully');
+    }
+    private function uploadFile(Request $request, string $randomPaperID, string $fileKey, string $directory): string
+    {
+        if ($request->hasFile($fileKey)) {
+            $fileName = $randomPaperID . '_' . $request->file($fileKey)->getClientOriginalName();
+            $filePath = $request->file($fileKey)->storeAs($directory, $fileName, 'public'); // Explicitly use 'public' disk
+            return $filePath;
+        }
+
+        return '';  // Return an empty string if no file is uploaded
+    }
+
+    public function show($p_id)
+    {
+        $paper = Paper::with(['status', 'author.user', 'coauthors', 'classifications', 'connectedReviewers.reviewer'])->where('id', $p_id)->first();
+
+        return Inertia::render('Paper/PaperView', [
+            'paper' => $paper,
+        ]);
+    }
+    public function downloadEditableFile($id)
+    {
+        $paper = Paper::find($id);
+        $filePath = $paper?->docFile;
+
+        if (!$paper || !$filePath) {
+            return response()->json(['error' => 'no-file'], 404);
+        }
+
+        $fullFilePath = storage_path('app/public/public/editable/' . basename($filePath));
+
+        if (!file_exists($fullFilePath)) {
+            return response()->json(['error' => 'file-not-found'], 404);
+        }
+
+        return response()->download($fullFilePath);
+    }
+    public function downloadPdfFile($id)
+    {
+        //dd($id);
+        $paper = Paper::find($id);
+        $filePath = $paper?->pdfFile;
+
+        if (!$paper || !$filePath) {
+            return response()->json(['error' => 'no-file'], 404);
+        }
+
+        $fullFilePath = storage_path('app/public/public/pdf/' . basename($filePath));
+
+        if (!file_exists($fullFilePath)) {
+            return response()->json(['error' => 'file-not-found'], 404);
+        }
+
+        return response()->download($fullFilePath);
+    }
+
+    public function downloadZipFile($id)
+    {
+        $paper = Paper::find($id);
+        $filePath = $paper?->zipFile;
+
+        if (!$paper || !$filePath) {
+            return response()->json(['error' => 'no-file'], 404);
+        }
+
+        $fullFilePath = storage_path('app/public/public/imageZip/' . basename($filePath));
+
+        if (!file_exists($fullFilePath)) {
+            return response()->json(['error' => 'file-not-found'], 404);
+        }
+
+        return response()->download($fullFilePath);
+    }
+}

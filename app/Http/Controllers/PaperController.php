@@ -131,28 +131,6 @@ class PaperController extends Controller
         return '';  // Return an empty string if no file is uploaded
     }
 
-    /*public function downloadEditableFile($id)
-    {
-        $paper = \App\Models\Paper::where('id', $id)->first();
-        $filePath = $paper->docFile;
-
-        // Construct the full file path using storage_path
-        $fullFilePath = storage_path('app/public/public/editable/' . basename($filePath));
-
-        if (file_exists($fullFilePath)) {
-            return response()->download($fullFilePath);
-        } else {
-//            abort(404, 'File not found');
-            if (!$paper || !$filePath) {
-                return response()->json(['error' => 'No file attached'], 404);
-            }
-
-            if (!file_exists($fullFilePath)) {
-                return response()->json(['error' => 'File not found'], 404);
-            }
-        }
-    }*/
-
     public function downloadEditableFile($id)
     {
         $paper = Paper::find($id);
@@ -171,31 +149,9 @@ class PaperController extends Controller
         return response()->download($fullFilePath);
     }
 
-
-    /*public function downloadPdfFile($id)
-    {
-        $paper = \App\Models\Paper::where('id', $id)->first();
-        $filePath = $paper->pdfFile;
-
-        // Construct the full file path using storage_path
-        $fullFilePath = storage_path('app/public/public/pdf/' . basename($filePath));
-
-        if (file_exists($fullFilePath)) {
-            return response()->download($fullFilePath);
-        } else {
-//            abort(404, 'File not found');
-            if (!$paper || !$filePath) {
-                return response()->json(['error' => 'No file attached'], 404);
-            }
-
-            if (!file_exists($fullFilePath)) {
-                return response()->json(['error' => 'File not found'], 404);
-            }
-        }
-    }*/
-
     public function downloadPdfFile($id)
     {
+        //dd($id);
         $paper = Paper::find($id);
         $filePath = $paper?->pdfFile;
 
@@ -211,29 +167,6 @@ class PaperController extends Controller
 
         return response()->download($fullFilePath);
     }
-
-
-    /*public function downloadZipFile($id)
-    {
-        $paper = \App\Models\Paper::where('id', $id)->first();
-        $filePath = $paper->zipFile;
-
-        // Construct the full file path using storage_path
-        $fullFilePath = storage_path('app/public/public/imageZip/' . basename($filePath));
-
-        if (file_exists($fullFilePath)) {
-            return response()->download($fullFilePath);
-        } else {
-//            abort(404, 'File not found');
-            if (!$paper || !$filePath) {
-                return response()->json(['error' => 'No file attached'], 404);
-            }
-
-            if (!file_exists($fullFilePath)) {
-                return response()->json(['error' => 'File not found'], 404);
-            }
-        }
-    }*/
 
     public function downloadZipFile($id)
     {

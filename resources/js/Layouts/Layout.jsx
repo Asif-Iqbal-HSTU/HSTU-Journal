@@ -45,6 +45,14 @@ export default function Layout({ user, header, children }) {
                                         {user.role === 'author' && (
                                             <>
                                                 <li>
+                                                    <Link
+                                                        href={route('backIssues.index')}
+                                                        className={`${isActive('/archive') ? 'text-blue-700' : 'text-gray-900'} hover:text-blue-700`}
+                                                    >
+                                                        Archive
+                                                    </Link>
+                                                </li>
+                                                <li>
                                                     <Link href={route('authorDashboard')}
                                                           className={`${isActive('/dashboard/author') ? 'text-blue-700' : 'text-gray-900'} hover:text-blue-700`}>
                                                         Dashboard
@@ -68,6 +76,22 @@ export default function Layout({ user, header, children }) {
                                         {user.role === 'editor' && (
                                             <>
                                                 <li>
+                                                    <Link
+                                                        href={route('backIssues.index')}
+                                                        className={`${isActive('/archive') ? 'text-blue-700' : 'text-gray-900'} hover:text-blue-700`}
+                                                    >
+                                                        Archive
+                                                    </Link>
+                                                </li>
+                                                <li>
+                                                    <Link
+                                                        href={route('backIssues.create')}
+                                                        className={`${isActive('/editor/back-issue-entry') ? 'text-blue-700' : 'text-gray-900'} hover:text-blue-700`}
+                                                    >
+                                                        Enter Back Issues
+                                                    </Link>
+                                                </li>
+                                                <li>
                                                     <Link href={route('editorDashboard')}
                                                           className={`${isActive('/dashboard/editor') ? 'text-blue-700' : 'text-gray-900'} hover:text-blue-700`}>
                                                         Dashboard
@@ -78,6 +102,14 @@ export default function Layout({ user, header, children }) {
                                         }
                                         {user.role === 'reviewer' && (
                                             <>
+                                                <li>
+                                                    <Link
+                                                        href={route('backIssues.index')}
+                                                        className={`${isActive('/archive') ? 'text-blue-700' : 'text-gray-900'} hover:text-blue-700`}
+                                                    >
+                                                        Archive
+                                                    </Link>
+                                                </li>
                                                 <li>
                                                     <Link href={route('reviewerDashboard')}
                                                           className={`${isActive('/dashboard/reviewer') ? 'text-blue-700' : 'text-gray-900'} hover:text-blue-700`}>
@@ -98,6 +130,14 @@ export default function Layout({ user, header, children }) {
                                     </>
                                     :
                                     <>
+                                        <li>
+                                            <Link
+                                                href={route('backIssues.index')}
+                                                className={`${isActive('/archive') ? 'text-blue-700' : 'text-gray-900'} hover:text-blue-700`}
+                                            >
+                                                Archive
+                                            </Link>
+                                        </li>
                                         <li>
                                             <Link href={route('login')}
                                                   className={`${isActive('/login') ? 'text-blue-700' : 'text-gray-900'} hover:text-blue-700`}>
