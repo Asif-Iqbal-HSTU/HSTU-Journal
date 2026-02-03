@@ -1,121 +1,144 @@
-import { Head, Link, router, useForm, usePage } from '@inertiajs/react';
-import Layout from '@/Layouts/Layout.jsx';
+import { Head, Link, usePage } from '@inertiajs/react';
+import PublicLayout from '@/Layouts/PublicLayout';
 import dayjs from 'dayjs';
-
-// FontAwesome Icons
-import { faFileWord, faFilePdf, faFileArchive, faEye } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import InputLabel from "@/Components/InputLabel.jsx";
-import TextInput from "@/Components/TextInput.jsx";
-import InputError from "@/Components/InputError.jsx";
-import PrimaryButton from "@/Components/PrimaryButton.jsx";
+import { faFilePdf, faQuoteRight, faCalendarAlt, faUser, faTags, faLayerGroup } from '@fortawesome/free-solid-svg-icons';
 
 export default function PaperView() {
-    const { paper, reviewers, paperReviewers } = usePage().props;
-    const user = usePage().props.auth.user;
-    console.log("ajaira");
-    console.log(paper.author.user.email);
+    const { paper } = usePage().props;
 
     return (
-        <Layout
-            user={user}
-            header={
-                <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                    Paper Preview
-                </h2>
-            }
-        >
-            <Head title="Paper Preview" />
+        <PublicLayout>
+            <Head title={paper.title} />
 
-            <div className="container mx-auto py-12">
-                <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
-                    <div className="col-span-5">
-                        <div
-                            className="bg-amber-50 max-w-4xl mx-auto p-6 dark:bg-gray-800/50 dark:bg-gradient-to-bl from-gray-700/50 via-transparent dark:ring-1 dark:ring-inset dark:ring-white/5 rounded-lg shadow-2xl shadow-gray-500/20"
-                        >
-                            <main className="pt-8 pb-16 lg:pt-16 lg:pb-24 bg-amber-50 dark:bg-gray-900 antialiased">
-                                <div className="flex justify-between px-4 mx-auto max-w-screen-xl">
-                                    <article
-                                        className="mx-auto w-full max-w-2xl format format-sm sm:format-base lg:format-lg format-blue dark:format-invert"
-                                    >
-                                        {/*<span
-                                                className="bg-red-100 text-red-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-red-400 border border-red-400"
-                                            >
-                                                {paper.status.name}
-                                            </span>*/}
-                                        <header className="mb-4 lg:mb-6 not-format">
-                                            <h1 className="mb-4 text-2xl font-extrabold leading-tight text-gray-900 lg:mb-6 lg:text-3xl dark:text-white">
-                                                {paper.title}
-                                            </h1>
-                                            <address className="flex items-center mb-6 not-italic">
-                                                <div
-                                                    className="inline-flex items-center mr-3 text-sm text-gray-900 dark:text-white">
-                                                    <div>
-                                                        <a href="#" rel="author"
-                                                           className="text-lg font-bold text-gray-900 dark:text-white"
-                                                        >
-                                                            Authors:&nbsp;
-                                                            <span className="text-lg font-medium text-gray-900 dark:text-white">
-                                                                {paper.author ? paper.author.user.name : 'Unknown'}
-                                                            </span>
-                                                        </a>
+            {/* Article Header */}
+            <div className="bg-white border-b border-gray-200">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+                    <div className="max-w-4xl">
+                        <div className="flex items-center gap-2 text-primary-600 font-semibold text-sm uppercase tracking-wide mb-4">
+                            <span className="bg-primary-50 px-2 py-1 rounded">Vol {paper.volume}, Issue {paper.issue}</span>
+                            <span className="text-gray-300">•</span>
+                            <span>Original Research</span>
+                        </div>
 
-                                                        {paper.coauthors && paper.coauthors.length > 0 && (
-                                                            <p className="text-base text-gray-500 dark:text-gray-400">
-                                                                Co-authors: {paper.coauthors.map((c) => c.name).join(', ')}
-                                                            </p>
-                                                        )}
+                        <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 leading-tight mb-6">
+                            {paper.title}
+                        </h1>
 
-                                                        <p className="text-base text-gray-500 dark:text-gray-400">
-                                                            <time>Publish date: {dayjs(paper.published_at).format('MMM D, YYYY')}</time>
-                                                        </p>
+                        <div className="flex flex-wrap items-center gap-4 text-gray-700">
+                            <div className="flex items-center gap-2">
+                                <FontAwesomeIcon icon={faUser} className="text-gray-400" />
+                                <span className="font-medium text-gray-900">{paper.author?.user?.name || 'Unknown'}</span>
+                            </div>
+                            {paper.coauthors && paper.coauthors.length > 0 && (
+                                <>
+                                    <span className="text-gray-300">|</span>
+                                    {paper.coauthors.map((author, index) => (
+                                        <span key={index} className="text-gray-600">
+                                            {author.name}
+                                        </span>
+                                    ))}
+                                </>
+                            )}
+                        </div>
 
-                                                        {paper.classifications && paper.classifications.length > 0 && (
-                                                            <p className="text-sm text-gray-500 dark:text-gray-400 italic">
-                                                                Classifications: <span
-                                                                className="font-thin">{paper.classifications.map((c) => c.name).join(', ')}</span>
-                                                            </p>
-                                                        )}
-
-                                                        <p className="text-sm text-gray-500 dark:text-gray-400 italic">
-                                                            Keywords: {paper.keywords}
-                                                        </p>
-
-                                                    </div>
-                                                </div>
-                                            </address>
-                                            {/*<h1 className="mb-4 text-3xl font-extrabold leading-tight text-gray-900 lg:mb-6 lg:text-4xl dark:text-white">
-                                                {paper.title}
-                                            </h1>*/}
-                                        </header>
-
-                                        <p className="lead text-justify">
-                                            <span className="text-lg font-bold text-gray-900 dark:text-white">
-                                                                Abstract: <br/>
-                                                            </span>
-                                            {paper.abstract}
-                                        </p>
-
-                                        {/* Download buttons for DOCX, PDF, and ZIP */}
-                                        <div className="flex space-x-4 mt-4">
-                                            {/* Download PDF */}
-                                            {paper.pdfFile && (
-                                                <a
-                                                    href={`/archive/papers/${paper.id}/download-pdf`}
-                                                    className="text-red-600 hover:text-red-800"
-                                                    title="Download PDF"
-                                                >
-                                                    <FontAwesomeIcon icon={faFilePdf} size="2x" />
-                                                </a>
-                                            )}
-                                        </div>
-                                    </article>
-                                </div>
-                            </main>
+                        <div className="mt-4 flex flex-wrap gap-4 text-sm text-gray-500">
+                            <div className="flex items-center gap-1">
+                                <FontAwesomeIcon icon={faCalendarAlt} />
+                                Published: {dayjs(paper.published_at).format('MMMM D, YYYY')}
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </Layout>
+
+            {/* Main Content */}
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                <div className="lg:grid lg:grid-cols-3 lg:gap-12">
+
+                    {/* Left Content Column */}
+                    <div className="lg:col-span-2">
+                        <div className="bg-white rounded-lg p-8 shadow-sm border border-gray-100 mb-8">
+                            <h2 className="text-xl font-bold text-gray-900 mb-4 border-b pb-2 border-gray-100">Abstract</h2>
+                            <p className="text-gray-700 leading-relaxed text-lg text-justify">
+                                {paper.abstract}
+                            </p>
+                        </div>
+
+                        {paper.keywords && (
+                            <div className="mb-8">
+                                <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wide mb-3 flex items-center gap-2">
+                                    <FontAwesomeIcon icon={faTags} className="text-primary-500" /> Keywords
+                                </h3>
+                                <div className="flex flex-wrap gap-2">
+                                    {paper.keywords.split(',').map((keyword, index) => (
+                                        <span key={index} className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm font-medium hover:bg-gray-200 transition">
+                                            {keyword.trim()}
+                                        </span>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {paper.classifications && paper.classifications.length > 0 && (
+                            <div className="mb-8">
+                                <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wide mb-3 flex items-center gap-2">
+                                    <FontAwesomeIcon icon={faLayerGroup} className="text-primary-500" /> Classifications
+                                </h3>
+                                <div className="flex flex-wrap gap-2">
+                                    {paper.classifications.map((c, index) => (
+                                        <span key={index} className="border border-gray-200 text-gray-600 px-3 py-1 rounded text-sm">
+                                            {c.name}
+                                        </span>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Right Sidebar Column */}
+                    <aside className="lg:col-span-1 space-y-8 mt-8 lg:mt-0">
+                        {/* Download Card */}
+                        <div className="bg-primary-50 rounded-lg p-6 border border-primary-100">
+                            <h3 className="text-lg font-bold text-gray-900 mb-4">Access Full Text</h3>
+                            {paper.pdfFile ? (
+                                <a
+                                    href={`/archive/papers/${paper.id}/download-pdf`}
+                                    className="flex items-center justify-center gap-2 w-full bg-red-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-red-700 transition shadow-sm"
+                                >
+                                    <FontAwesomeIcon icon={faFilePdf} />
+                                    Download PDF
+                                </a>
+                            ) : (
+                                <div className="text-gray-500 italic text-center">PDF Unavailable</div>
+                            )}
+                        </div>
+
+                        {/* Citation Card */}
+                        <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
+                            <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wide mb-3 flex items-center gap-2">
+                                <FontAwesomeIcon icon={faQuoteRight} className="text-gray-400" /> Cite this article
+                            </h3>
+                            <div className="bg-gray-50 p-3 rounded text-xs text-gray-600 font-mono break-words border border-gray-200">
+                                {paper.author?.user?.name?.split(' ').pop()}, {paper.author?.user?.name?.charAt(0)}.,
+                                {paper.coauthors?.map(c => ` ${c.name.split(' ').pop()}, ${c.name.charAt(0)}.`).join('')} ({dayjs(paper.published_at).format('YYYY')}).
+                                {paper.title}. <em>BAUST Journal</em>, {paper.volume}({paper.issue}).
+                            </div>
+                        </div>
+
+                        {/* Share/Info */}
+                        {/* Placeholder for future share buttons or DOI */}
+                        {paper.doi && (
+                            <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
+                                <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wide mb-2">DOI</h3>
+                                <a href={`https://doi.org/${paper.doi}`} className="text-primary-600 hover:underline break-all">
+                                    https://doi.org/{paper.doi}
+                                </a>
+                            </div>
+                        )}
+                    </aside>
+                </div>
+            </div>
+        </PublicLayout>
     );
 }

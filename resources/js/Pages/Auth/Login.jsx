@@ -29,6 +29,7 @@ export default function Login({ status, canResetPassword }) {
         { value: 'editor', label: 'Editor' },
         { value: 'reviewer', label: 'Reviewer' },
         { value: 'publisher', label: 'Publisher' },
+        { value: 'admin', label: 'Admin' },
     ];
 
     const handleRoleChange = (selectedOption) => {
@@ -50,7 +51,7 @@ export default function Login({ status, canResetPassword }) {
     return (
         <Layout>
 
-            <Head title="Log in"/>
+            <Head title="Log in" />
 
             <div
                 className="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100 dark:bg-gray-900">
@@ -65,7 +66,7 @@ export default function Login({ status, canResetPassword }) {
 
                     <form onSubmit={submit}>
                         <div>
-                            <InputLabel htmlFor="username" value="Username"/>
+                            <InputLabel htmlFor="username" value="Username" />
 
                             <TextInput
                                 id="username"
@@ -79,11 +80,11 @@ export default function Login({ status, canResetPassword }) {
                                 placeholder="Enter Username"
                             />
 
-                            <InputError message={errors.username} className="mt-2"/>
+                            <InputError message={errors.username} className="mt-2" />
                         </div>
 
                         <div className="mt-4">
-                            <InputLabel htmlFor="role" value="Log in as"/>
+                            <InputLabel htmlFor="role" value="Log in as" />
 
                             <select
                                 id="role"
@@ -98,9 +99,10 @@ export default function Login({ status, canResetPassword }) {
                                 <option value="editor">Editor</option>
                                 <option value="reviewer">Reviewer</option>
                                 <option value="publisher">Publisher</option>
+                                <option value="admin">Admin</option>
                             </select>
 
-                            <InputError message={errors.role} className="mt-2"/>
+                            <InputError message={errors.role} className="mt-2" />
                         </div>
 
                         {/*<div className="mt-4">
@@ -117,9 +119,9 @@ export default function Login({ status, canResetPassword }) {
                             />
                             <InputError message={errors.role} className="mt-2" />
                         </div>*/}
-                        
+
                         <div className="mt-4">
-                            <InputLabel htmlFor="password" value="Password"/>
+                            <InputLabel htmlFor="password" value="Password" />
 
                             <div className="relative mt-1 w-full">
                                 <TextInput
@@ -139,7 +141,7 @@ export default function Login({ status, canResetPassword }) {
                                 >
                                     <
                                         FontAwesomeIcon icon={showPassword ? faEye : faEyeSlash}
-                                                        className="text-gray-600 dark:text-gray-400"
+                                        className="text-gray-600 dark:text-gray-400"
                                     />
 
                                 </button>

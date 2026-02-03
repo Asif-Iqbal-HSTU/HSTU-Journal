@@ -52,7 +52,14 @@ class BackIssueController extends Controller
 
     public function create()
     {
-        return inertia('Editor/BackIssueEntry');
+        $papers = Paper::where('type', 'Back Issue')
+            ->orderBy('published_at', 'desc')
+            ->with(['author.user', 'coauthors'])
+            ->get();
+
+        return inertia('Editor/BackIssueEntry', [
+            'papers' => $papers
+        ]);
     }
 
     public function store(Request $request)
@@ -137,7 +144,7 @@ class BackIssueController extends Controller
             }
         }
 
-        return back()->with('success','Back issue article added successfully');
+        return back()->with('success', 'Back issue article added successfully');
     }
     private function uploadFile(Request $request, string $randomPaperID, string $fileKey, string $directory): string
     {
@@ -194,21 +201,95 @@ class BackIssueController extends Controller
         return response()->download($fullFilePath);
     }
 
-    public function downloadZipFile($id)
+    public function edit($id)
     {
-        $paper = Paper::find($id);
-        $filePath = $paper?->zipFile;
+        $paper = Paper::with(['author.user', 'coauthors'])->findOrFail($id);
 
-        if (!$paper || !$filePath) {
-            return response()->json(['error' => 'no-file'], 404);
+        $papers = Paper::where('type', 'Back Issue')
+            ->orderBy('published_at', 'desc')
+            ->with(['author.user', 'coauthors'])
+            ->get();
+
+        return inertia('Editor/BackIssueEntry', [
+            'paper' => $paper,
+            'papers' => $papers,
+            'isEditing' => true
+        ]);
+    }
+
+    public function update(Request $request, $id)
+    {
+        $paper = Paper::findOrFail($id);
+
+        $request->validate([
+            'title' => 'required',
+            'abstract' => 'required',
+            'keywords' => 'required',
+            'volume' => 'required',
+            'issue' => 'required',
+            'published_at' => 'required|date',
+            'authors' => 'required|array|min:1',
+        ]);
+
+        $data = [
+            'title' => $request->title,
+            'abstract' => $request->abstract,
+            'keywords' => $request->keywords,
+            'volume' => $request->volume,
+            'issue' => $request->issue,
+            'published_at' => $request->published_at,
+            'doi' => $request->doi ?? null,
+        ];
+
+        if ($request->hasFile('pdfFile')) {
+            $data['pdfFile'] = $this->uploadFile($request, $paper->paperID, 'pdfFile', 'public/pdf');
+            $data['docFile'] = $data['pdfFile'];
         }
 
-        $fullFilePath = storage_path('app/public/public/imageZip/' . basename($filePath));
+        $paper->update($data);
 
-        if (!file_exists($fullFilePath)) {
-            return response()->json(['error' => 'file-not-found'], 404);
+        // Update authors
+        // This part is tricky if we want to sync. For simplicity, let's delete and recreate Coauthors
+        // and update the main author
+
+        foreach ($request->authors as $index => $authorData) {
+            if ($index == 0) {
+                $user = $paper->author->user;
+                $user->update([
+                    'name' => $authorData['name'],
+                    'email' => $authorData['email'],
+                ]);
+            }
         }
 
-        return response()->download($fullFilePath);
+        // Handle Coauthors
+        $paper->coauthors()->delete();
+        foreach ($request->authors as $index => $authorData) {
+            if ($index > 0) {
+                Coauthor::create([
+                    'paper_id' => $paper->id,
+                    'name' => $authorData['name'],
+                    'email' => $authorData['email'],
+                    'affiliation' => $authorData['affiliation'],
+                    'orcid_id' => $authorData['orcid'] ?? null
+                ]);
+            }
+        }
+
+        return redirect()->route('backIssues.create')->with('success', 'Back issue article updated successfully');
+    }
+
+    public function destroy($id)
+    {
+        $paper = Paper::findOrFail($id);
+
+        // Optional: delete files
+
+        $paper->coauthors()->delete();
+        $paper->author()->delete();
+        $paper->status()->delete();
+        $paper->delete();
+
+        return back()->with('success', 'Back issue article deleted successfully');
     }
 }
