@@ -138,7 +138,7 @@ export default function PaperPreview() {
                                                         className="inline-flex items-center mr-3 text-sm text-gray-900 dark:text-white">
                                                         <div>
                                                             <a href="#" rel="author"
-                                                               className="text-xl font-bold text-gray-900 dark:text-white">
+                                                                className="text-xl font-bold text-gray-900 dark:text-white">
                                                                 {paper.author ? paper.author.user.name : 'Unknown'}
                                                             </a>
                                                             <div
@@ -157,15 +157,30 @@ export default function PaperPreview() {
                                                             </p>
 
                                                             {paper.classifications && paper.classifications.length > 0 && (
-                                                                <p className="text-sm text-gray-500 dark:text-gray-400 italic">
-                                                                    Classifications: <span
-                                                                        className="font-thin">{paper.classifications.map((c) => c.name).join(', ')}</span>
-                                                                </p>
+                                                                <div className="mt-3 flex flex-wrap gap-2">
+                                                                    <span className="text-sm text-gray-500 w-full mb-1">Classifications:</span>
+                                                                    {paper.classifications.map((c, i) => (
+                                                                        <span key={i} className="bg-blue-50 text-blue-700 px-3 py-1 rounded-md text-xs border border-blue-100 font-medium">
+                                                                            {c.name}
+                                                                        </span>
+                                                                    ))}
+                                                                </div>
                                                             )}
 
-                                                            <p className="text-sm text-gray-500 dark:text-gray-400 italic">
-                                                                Keywords: {paper.keywords}
-                                                            </p>
+                                                            {paper.keywords && (
+                                                                <div className="mt-4 flex flex-wrap gap-2">
+                                                                    <span className="text-sm text-gray-500 w-full mb-1">Keywords:</span>
+                                                                    {(typeof paper.keywords === 'string' ? paper.keywords.split(/[,;]\s*|\s{2,}/) : []).map((keyword, index) => {
+                                                                        const trimmed = keyword.trim();
+                                                                        if (!trimmed) return null;
+                                                                        return (
+                                                                            <span key={index} className="bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full border border-emerald-100 text-xs font-bold shadow-sm">
+                                                                                {trimmed}
+                                                                            </span>
+                                                                        );
+                                                                    })}
+                                                                </div>
+                                                            )}
 
                                                         </div>
                                                     </div>
@@ -183,35 +198,35 @@ export default function PaperPreview() {
                                             <div className="flex space-x-4 mt-4">
                                                 {/* Download DOCX */}
                                                 {paper.docFile && (
-                                                <a
-                                                    href={`/papers/${paper.id}/download-docx`}
-                                                    className="text-blue-600 hover:text-blue-800"
-                                                    title="Download DOCX"
-                                                >
-                                                    <FontAwesomeIcon icon={faFileWord} size="2x" />
-                                                </a>
+                                                    <a
+                                                        href={`/papers/${paper.id}/download-docx`}
+                                                        className="text-blue-600 hover:text-blue-800"
+                                                        title="Download DOCX"
+                                                    >
+                                                        <FontAwesomeIcon icon={faFileWord} size="2x" />
+                                                    </a>
                                                 )}
 
                                                 {/* Download PDF */}
                                                 {paper.pdfFile && (
-                                                <a
-                                                    href={`/papers/${paper.id}/download-pdf`}
-                                                    className="text-red-600 hover:text-red-800"
-                                                    title="Download PDF"
-                                                >
-                                                    <FontAwesomeIcon icon={faFilePdf} size="2x" />
-                                                </a>
+                                                    <a
+                                                        href={`/papers/${paper.id}/download-pdf`}
+                                                        className="text-red-600 hover:text-red-800"
+                                                        title="Download PDF"
+                                                    >
+                                                        <FontAwesomeIcon icon={faFilePdf} size="2x" />
+                                                    </a>
                                                 )}
 
                                                 {/* Download ZIP */}
                                                 {paper.pdfFile && (
-                                                <a
-                                                    href={`/papers/${paper.id}/download-zip`}
-                                                    className="text-yellow-600 hover:text-yellow-800"
-                                                    title="Download ZIP"
-                                                >
-                                                    <FontAwesomeIcon icon={faFileArchive} size="2x" />
-                                                </a>
+                                                    <a
+                                                        href={`/papers/${paper.id}/download-zip`}
+                                                        className="text-yellow-600 hover:text-yellow-800"
+                                                        title="Download ZIP"
+                                                    >
+                                                        <FontAwesomeIcon icon={faFileArchive} size="2x" />
+                                                    </a>
                                                 )}
                                             </div>
                                         </article>
@@ -553,15 +568,30 @@ export default function PaperPreview() {
                                                     </p>
 
                                                     {paper.classifications && paper.classifications.length > 0 && (
-                                                        <p className="text-sm text-gray-500 dark:text-gray-400 italic">
-                                                            Classifications: <span
-                                                                className="font-thin">{paper.classifications.map((c) => c.name).join(', ')}</span>
-                                                        </p>
+                                                        <div className="mt-3 flex flex-wrap gap-2">
+                                                            <span className="text-sm text-gray-500 w-full mb-1">Classifications:</span>
+                                                            {paper.classifications.map((c, i) => (
+                                                                <span key={i} className="bg-blue-50 text-blue-700 px-3 py-1 rounded-md text-xs border border-blue-100 font-medium">
+                                                                    {c.name}
+                                                                </span>
+                                                            ))}
+                                                        </div>
                                                     )}
 
-                                                    <p className="text-sm text-gray-500 dark:text-gray-400 italic">
-                                                        Keywords: {paper.keywords}
-                                                    </p>
+                                                    {paper.keywords && (
+                                                        <div className="mt-4 flex flex-wrap gap-2">
+                                                            <span className="text-sm text-gray-500 w-full mb-1">Keywords:</span>
+                                                            {(typeof paper.keywords === 'string' ? paper.keywords.split(/[,;]\s*|\s{2,}/) : []).map((keyword, index) => {
+                                                                const trimmed = keyword.trim();
+                                                                if (!trimmed) return null;
+                                                                return (
+                                                                    <span key={index} className="bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full border border-emerald-100 text-xs font-bold shadow-sm">
+                                                                        {trimmed}
+                                                                    </span>
+                                                                );
+                                                            })}
+                                                        </div>
+                                                    )}
 
                                                 </div>
                                             </div>

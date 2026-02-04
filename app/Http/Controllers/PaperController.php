@@ -75,6 +75,10 @@ class PaperController extends Controller
             'zipFile' => $imageFilePath,
         ]);
 
+        // Generate slug
+        $paper->slug = Str::slug($paper->title . '-' . $paper->id);
+        $paper->save();
+
         $status = Status::create([
             'paper_id' => $paper->id,
             'name' => 'Pending',
@@ -94,7 +98,7 @@ class PaperController extends Controller
                     'name' => $coAuthor['name'],
                     'email' => $coAuthor['email'],
                     'affiliation' => $coAuthor['affiliation'],
-//                    'orcid_id' => $coAuthor['orcid_id'] ? $coAuthor['orcid_id'] : null,
+                    //                    'orcid_id' => $coAuthor['orcid_id'] ? $coAuthor['orcid_id'] : null,
                     'orcid_id' => $coAuthor['orcid_id'] ?? null,
                 ]);
             }
@@ -116,7 +120,7 @@ class PaperController extends Controller
         flash()->success('Paper Uploaded successfully.');
 
         return back();
-//        return redirect()->intended(route('adb', absolute: false));
+        //        return redirect()->intended(route('adb', absolute: false));
     }
 
 
@@ -204,7 +208,7 @@ class PaperController extends Controller
     {
 
         // Eager load the author and status for the paper
-    //    $paper->load(['author.user', 'status']);
+        //    $paper->load(['author.user', 'status']);
         // $paper = Paper::with(['status', 'author.user', 'coauthors', 'classifications', 'connectedReviewer.reviewer'])->where('id', $paper)->first(); // Eager load 'status', 'author', and 'user'
         $paper = Paper::with(['status', 'author.user', 'coauthors', 'classifications', 'connectedReviewers.reviewer'])->where('id', $p_id)->first(); // Eager load 'status', 'author', and 'user'
 //        $paper = Paper::where('id', $paper)->first(); // Eager load 'status', 'author', and 'user'
@@ -220,7 +224,7 @@ class PaperController extends Controller
         ]);
     }
 
-//    public function show(Paper $paper)
+    //    public function show(Paper $paper)
 //    {
 //        // Eager load coauthors, author, and status
 //        $paper->load(['coauthors', 'author.user', 'status']);
@@ -286,6 +290,10 @@ class PaperController extends Controller
             'zipFile' => $imageFilePath,
         ]);
 
+        // Update slug if title changed (optional, but good for consistency)
+        $paper->slug = Str::slug($paper->title . '-' . $paper->id);
+        $paper->save();
+
         $status = Status::where('paper_id', $paper->id)->first();
         $status->name = "Pending";
         $status->save();
@@ -321,7 +329,7 @@ class PaperController extends Controller
             foreach ($classifications as $classification) {
                 Classification::create([
                     'paper_id' => $paper->id,
-//                    'name' => $classification,
+                    //                    'name' => $classification,
                     'name' => $classification['name'],
                 ]);
             }

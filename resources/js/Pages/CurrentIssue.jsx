@@ -58,7 +58,7 @@ export default function CurrentIssue({ papers, volume, issue, published_at }) {
                                 <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-6">
                                     <div className="flex-1">
                                         <h2 className="text-xl font-bold text-gray-900 mb-2 hover:text-primary-600 transition-colors">
-                                            <Link href={route('viewPaper', article.id)}>{article.title}</Link>
+                                            <Link href={route('article.show', article.slug || article.id)}>{article.title}</Link>
                                         </h2>
                                         <p className="text-sm text-gray-600 font-medium mb-4">
                                             {article.author?.user?.name}
@@ -77,7 +77,7 @@ export default function CurrentIssue({ papers, volume, issue, published_at }) {
                                             Download PDF
                                         </a>
                                         <Link
-                                            href={route('viewPaper', article.id)}
+                                            href={route('article.show', article.slug || article.id)}
                                             className="inline-flex items-center px-4 py-2 border border-primary-100 shadow-sm text-sm font-medium rounded-md text-primary-700 bg-primary-50 hover:bg-primary-100 transition-colors"
                                         >
                                             <FontAwesomeIcon icon={faEye} className="mr-2" />

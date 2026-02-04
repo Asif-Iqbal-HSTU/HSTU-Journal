@@ -98,7 +98,7 @@ export default function BackIssuesIndex({ backIssues, volumes, years, filters })
                                         </div>
 
                                         <h3 className="text-xl font-bold text-gray-900 mb-2">
-                                            <Link href={`/archive/papers/${paper.id}`} className="hover:text-primary-600 transition-colors">
+                                            <Link href={route('article.show', paper.slug || paper.id)} className="hover:text-primary-600 transition-colors">
                                                 {paper.title}
                                             </Link>
                                         </h3>
@@ -115,7 +115,7 @@ export default function BackIssuesIndex({ backIssues, volumes, years, filters })
                                         </p>
 
                                         <div className="flex items-center justify-between border-t border-gray-100 pt-4 mt-auto">
-                                            <Link href={`/archive/papers/${paper.id}`} className="text-sm font-medium text-primary-600 hover:text-primary-800 flex items-center gap-1">
+                                            <Link href={route('article.show', paper.slug || paper.id)} className="text-sm font-medium text-primary-600 hover:text-primary-800 flex items-center gap-1">
                                                 <FontAwesomeIcon icon={faBook} />
                                                 Read Article
                                             </Link>
@@ -135,8 +135,8 @@ export default function BackIssuesIndex({ backIssues, volumes, years, filters })
                                             onClick={() => link.url && get(link.url)}
                                             disabled={!link.url}
                                             className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${link.active
-                                                    ? 'bg-primary-600 text-white'
-                                                    : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed'
+                                                ? 'bg-primary-600 text-white'
+                                                : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed'
                                                 }`}
                                             dangerouslySetInnerHTML={{ __html: link.label }}
                                         />

@@ -105,6 +105,7 @@ Route::middleware(['auth'])->group(function () {
 Route::get('/archive', [BackIssueController::class, 'index'])->name('backIssues.index');
 
 Route::get('/archive/papers/{paper}', [BackIssueController::class, 'show'])->name('viewPaper');
+Route::get('/article/{slug}', [BackIssueController::class, 'showBySlug'])->name('article.show');
 Route::get('/archive/papers/{id}/download-pdf', [BackIssueController::class, 'downloadPdfFile'])->name('archive.papers.download.pdf');
 
 Route::get('/reviewer/accept/{reviewer_id}/{paper_id}', [ReviewerController::class, 'acceptReviewerState'])->name('reviewer.accept');

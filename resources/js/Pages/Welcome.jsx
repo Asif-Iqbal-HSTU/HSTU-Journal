@@ -315,7 +315,7 @@ export default function Welcome({ auth, latestPapers, editors }) {
                                             Vol {paper.volume}, Issue {paper.issue}
                                         </span>
                                     </div>
-                                    <Link href={route('viewPaper', paper.id)} className="block mt-2 flex-grow">
+                                    <Link href={route('article.show', paper.slug || paper.id)} className="block mt-2 flex-grow">
                                         <h3 className="text-lg font-bold text-gray-900 hover:text-primary-600 transition-colors line-clamp-3">
                                             {paper.title}
                                         </h3>

@@ -161,6 +161,36 @@ class BackIssueController extends Controller
     {
         $paper = Paper::with(['status', 'author.user', 'coauthors', 'classifications', 'connectedReviewers.reviewer'])->where('id', $p_id)->first();
 
+        if (!$paper) {
+            $paper = Paper::with(['status', 'author.user', 'coauthors', 'classifications', 'connectedReviewers.reviewer'])->where('slug', $p_id)->first();
+        }
+
+        if (!$paper) {
+            abort(404);
+        }
+
+        return Inertia::render('Paper/PaperView', [
+            'paper' => $paper,
+        ]);
+    }
+
+    public function showBySlug($slug)
+    {
+        $paper = Paper::with(['status', 'author.user', 'coauthors', 'classifications', 'connectedReviewers.reviewer'])
+            ->where('slug', $slug)
+            ->first();
+
+        if (!$paper) {
+            // Try ID as fallback
+            $paper = Paper::with(['status', 'author.user', 'coauthors', 'classifications', 'connectedReviewers.reviewer'])
+                ->where('id', $slug)
+                ->first();
+        }
+
+        if (!$paper) {
+            abort(404);
+        }
+
         return Inertia::render('Paper/PaperView', [
             'paper' => $paper,
         ]);
