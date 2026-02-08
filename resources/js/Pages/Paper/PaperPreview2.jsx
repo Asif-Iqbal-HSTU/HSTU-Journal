@@ -145,6 +145,10 @@ export default function PaperPreview() {
                                                                 className="text-lg text-gray-900 dark:text-white">
                                                                 {paper.author ? paper.author.user.email : 'Unknown'}
                                                             </div>
+                                                            <div
+                                                                className="text-lg text-gray-900 dark:text-white">
+                                                                {paper.author ? paper.author.user.phone : 'Unknown'}
+                                                            </div>
 
                                                             {paper.coauthors && paper.coauthors.length > 0 && (
                                                                 <p className="text-base text-gray-500 dark:text-gray-400">
