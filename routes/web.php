@@ -94,12 +94,16 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::post('/admin/editors/reorder', [\App\Http\Controllers\EditorManagementController::class, 'updateOrder'])->name('admin.editors.reorder');
 });
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'verified', EditorMiddleware::class])->group(function () {
     Route::get('/editor/back-issue-entry', [BackIssueController::class, 'create'])->name('backIssues.create');
     Route::post('/editor/back-issue-entry', [BackIssueController::class, 'store'])->name('backIssues.store');
     Route::get('/editor/back-issue-entry/{id}/edit', [BackIssueController::class, 'edit'])->name('backIssues.edit');
     Route::post('/editor/back-issue-entry/{id}', [BackIssueController::class, 'update'])->name('backIssues.update');
     Route::delete('/editor/back-issue-entry/{id}', [BackIssueController::class, 'destroy'])->name('backIssues.destroy');
+
+    // DOI Management
+    Route::post('/doi/assign/{paper}', [\App\Http\Controllers\DoiController::class, 'assign'])->name('doi.assign');
+    Route::get('/doi/xml/{paper}', [\App\Http\Controllers\DoiController::class, 'downloadXml'])->name('doi.xml');
 });
 
 Route::get('/archive', [BackIssueController::class, 'index'])->name('backIssues.index');

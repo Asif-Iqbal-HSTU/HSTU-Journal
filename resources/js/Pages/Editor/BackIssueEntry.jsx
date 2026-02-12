@@ -3,7 +3,7 @@ import { Head, usePage, router, Link } from "@inertiajs/react";
 import { useState, useEffect } from "react";
 import Modal from "@/Components/Modal.jsx";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEdit, faTrash, faPlus, faFilePdf, faUserGraduate } from "@fortawesome/free-solid-svg-icons";
+import { faEdit, faTrash, faPlus, faFilePdf, faUserGraduate, faBarcode, faCode } from "@fortawesome/free-solid-svg-icons";
 
 export default function BackIssueEntry({ papers, paper, isEditing = false }) {
     const user = usePage().props.auth.user;
@@ -132,6 +132,16 @@ export default function BackIssueEntry({ papers, paper, isEditing = false }) {
                 }
             });
         }
+    };
+
+    const assignDoi = (id) => {
+        router.post(route('doi.assign', id), {}, {
+            onSuccess: () => {
+                setNotification("DOI Assigned Successfully!");
+                setShowModal(true);
+            },
+            preserveScroll: true
+        });
     };
 
     return (
@@ -325,6 +335,7 @@ export default function BackIssueEntry({ papers, paper, isEditing = false }) {
                                         <tr className="bg-gray-50 border-b border-gray-100">
                                             <th className="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Article Info</th>
                                             <th className="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Volume/Issue</th>
+                                            <th className="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">DOI / XML</th>
                                             <th className="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-right">Actions</th>
                                         </tr>
                                     </thead>
@@ -346,6 +357,26 @@ export default function BackIssueEntry({ papers, paper, isEditing = false }) {
                                                             <span className="text-sm font-medium text-gray-900">Vol {p.volume}, Issue {p.issue}</span>
                                                             <span className="text-[10px] text-gray-400 font-bold uppercase">{new Date(p.published_at).toLocaleDateString()}</span>
                                                         </div>
+                                                    </td>
+                                                    <td className="px-6 py-4">
+                                                        {p.doi ? (
+                                                            <div className="flex flex-col gap-2 items-start">
+                                                                <span className="text-[10px] bg-blue-50 text-blue-700 px-2 py-1 rounded font-mono border border-blue-100 truncate max-w-[140px]" title={p.doi}>
+                                                                    {p.doi}
+                                                                </span>
+                                                                <a href={route('doi.xml', p.id)}
+                                                                    className="text-[10px] bg-gray-100 text-gray-600 px-2 py-1 rounded hover:bg-gray-200 hover:text-gray-900 transition-colors flex items-center gap-1 border border-gray-200"
+                                                                    target="_blank"
+                                                                    title="Download Crossref XML">
+                                                                    <FontAwesomeIcon icon={faCode} /> XML
+                                                                </a>
+                                                            </div>
+                                                        ) : (
+                                                            <button onClick={() => assignDoi(p.id)}
+                                                                className="text-xs bg-indigo-50 text-indigo-700 px-3 py-1.5 rounded-lg border border-indigo-100 hover:bg-indigo-100 hover:shadow-sm transition-all flex items-center gap-1.5 font-medium">
+                                                                <FontAwesomeIcon icon={faBarcode} /> Assign DOI
+                                                            </button>
+                                                        )}
                                                     </td>
                                                     <td className="px-6 py-4 text-right">
                                                         <div className="flex justify-end gap-2">
