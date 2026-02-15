@@ -196,11 +196,16 @@ export default function Welcome({ auth, latestPapers, editors }) {
                                 <span className="w-1 h-8 bg-green-500 rounded-full"></span>
                                 Indexed & Abstracted In
                             </h2>
-                            <div className="flex flex-wrap gap-8 items-center justify-center grayscale hover:grayscale-0 transition-all duration-500">
-                                <a href="https://www.crossref.org/" target="_blank" rel="noopener noreferrer" className="opacity-70 hover:opacity-100 transition-opacity transform hover:scale-105">
-                                    <img src="https://assets.crossref.org/logo/crossref-logo-landscape-200.png" alt="Crossref" className="h-10 w-auto" />
+                            <div className="flex flex-wrap gap-10 items-center justify-center">
+                                <a href="https://www.crossref.org/" target="_blank" rel="noopener noreferrer" className="opacity-90 hover:opacity-100 transition-opacity transform hover:scale-105">
+                                    <img src="https://assets.crossref.org/logo/crossref-logo-landscape-200.png" alt="Crossref" className="h-12 w-auto" />
                                 </a>
-                                {/* Add more indexing services here in future */}
+                                <a href="https://doi.org/" target="_blank" rel="noopener noreferrer" className="opacity-90 hover:opacity-100 transition-opacity transform hover:scale-105">
+                                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/DOI_logo.svg/320px-DOI_logo.svg.png" alt="DOI" className="h-10 w-auto" />
+                                </a>
+                                <a href="https://portal.issn.org/resource/ISSN/2521-5256" target="_blank" rel="noopener noreferrer" className="opacity-90 hover:opacity-100 transition-opacity transform hover:scale-105">
+                                    <img src="/images/issn.png" alt="ISSN Portal" className="h-12 w-auto object-contain" />
+                                </a>
                             </div>
                         </section>
 
