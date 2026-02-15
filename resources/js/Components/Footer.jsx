@@ -20,12 +20,18 @@ export default function Footer() {
                         <p className="text-sm leading-relaxed mb-6">
                             A premier platform for cutting-edge research and academic discourse. committed to advancing knowledge across science and technology.
                         </p>
-                        <div className="flex space-x-4">
+                        <div className="flex space-x-4 mb-6">
                             {[faGlobe, faShareAlt].map((icon, idx) => (
                                 <a key={idx} href="#" className="text-gray-400 hover:text-white transition-colors">
                                     <FontAwesomeIcon icon={icon} size="lg" />
                                 </a>
                             ))}
+                        </div>
+
+                        <div className="pt-4 border-t border-gray-800">
+                            <a href="https://www.crossref.org/" target="_blank" rel="noopener noreferrer" className="inline-block opacity-70 hover:opacity-100 transition-opacity">
+                                <img src="https://assets.crossref.org/logo/crossref-logo-landscape-200.png" alt="Member of Crossref" className="h-8 w-auto bg-gray-100 rounded px-2 py-1" />
+                            </a>
                         </div>
                     </div>
 

@@ -72,10 +72,16 @@ export default function Welcome({ auth, latestPapers, editors }) {
 
                         {/* Left Col: Fixed Text */}
                         <div className="flex flex-col justify-center px-6 py-16 lg:py-0 lg:pr-12 relative z-10 lg:pl-8">
-                            <span className="inline-flex items-center gap-2 py-1 px-3 rounded-full bg-primary-900/50 border border-primary-700/50 text-primary-300 text-xs font-semibold mb-6 w-fit tracking-wider uppercase backdrop-blur-sm shadow-sm">
-                                <span className="w-2 h-2 rounded-full bg-primary-500 animate-pulse"></span>
-                                ISSN: 2521-5256
-                            </span>
+                            <div className="flex flex-wrap gap-3 mb-6">
+                                <span className="inline-flex items-center gap-2 py-1 px-3 rounded-full bg-primary-900/50 border border-primary-700/50 text-primary-300 text-xs font-semibold w-fit tracking-wider uppercase backdrop-blur-sm shadow-sm">
+                                    <span className="w-2 h-2 rounded-full bg-primary-500 animate-pulse"></span>
+                                    ISSN: 2521-5256
+                                </span>
+                                <span className="inline-flex items-center gap-2 py-1 px-3 rounded-full bg-blue-900/50 border border-blue-700/50 text-blue-300 text-xs font-semibold w-fit tracking-wider uppercase backdrop-blur-sm shadow-sm">
+                                    <span className="w-2 h-2 rounded-full bg-blue-500"></span>
+                                    DOI Prefix: 10.66039
+                                </span>
+                            </div>
                             <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white leading-tight mb-6 tracking-tight">
                                 Advancing Knowledge in <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-400 to-accent">Multidisciplinary Sciences</span>
                             </h1>
@@ -181,6 +187,20 @@ export default function Welcome({ auth, latestPapers, editors }) {
                                     </div>
                                     <span className="font-semibold text-gray-800">State of the Art Research</span>
                                 </div>
+                            </div>
+                        </section>
+
+                        {/* Indexed In Section */}
+                        <section className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+                            <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+                                <span className="w-1 h-8 bg-green-500 rounded-full"></span>
+                                Indexed & Abstracted In
+                            </h2>
+                            <div className="flex flex-wrap gap-8 items-center justify-center grayscale hover:grayscale-0 transition-all duration-500">
+                                <a href="https://www.crossref.org/" target="_blank" rel="noopener noreferrer" className="opacity-70 hover:opacity-100 transition-opacity transform hover:scale-105">
+                                    <img src="https://assets.crossref.org/logo/crossref-logo-landscape-200.png" alt="Crossref" className="h-10 w-auto" />
+                                </a>
+                                {/* Add more indexing services here in future */}
                             </div>
                         </section>
 

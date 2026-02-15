@@ -1,8 +1,9 @@
+import { useState } from 'react';
 import { Head, Link, usePage } from '@inertiajs/react';
 import PublicLayout from '@/Layouts/PublicLayout';
 import dayjs from 'dayjs';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFilePdf, faQuoteRight, faCalendarAlt, faUser, faTags, faLayerGroup, faFingerprint } from '@fortawesome/free-solid-svg-icons';
+import { faFilePdf, faQuoteRight, faCalendarAlt, faUser, faTags, faLayerGroup, faFingerprint, faChevronDown, faChevronUp, faDownload } from '@fortawesome/free-solid-svg-icons';
 
 export default function PaperView() {
     const { paper } = usePage().props;
@@ -12,6 +13,117 @@ export default function PaperView() {
 
     const origin = typeof window !== 'undefined' ? window.location.origin : '';
     const pdfUrl = `${origin}/archive/papers/${paper.id}/download-pdf`;
+
+    const [citationFormat, setCitationFormat] = useState('APA');
+    const [isCitationMenuOpen, setIsCitationMenuOpen] = useState(true);
+
+    const citationStyles = [
+        'ACM', 'ACS', 'APA', 'ABNT', 'Chicago', 'Harvard', 'IEEE', 'MLA', 'Turabian', 'Vancouver'
+    ];
+
+    const getFormattedCitation = (style) => {
+        const title = paper.title || '';
+        const year = dayjs(paper.published_at).format('YYYY');
+        const month = dayjs(paper.published_at).format('MMM');
+        const day = dayjs(paper.published_at).format('D');
+        const journal = "BAUST Journal";
+        const vol = paper.volume || '';
+        const issue = paper.issue || '';
+        const doiUrl = paper.doi ? `https://doi.org/${paper.doi}` : '';
+        const doi = paper.doi || '';
+
+        // Helper to get authors
+        const getAuthorsHelper = (type) => {
+            let names = [];
+            if (paper.author?.user?.name) names.push(paper.author.user.name);
+            if (paper.coauthors) paper.coauthors.forEach(c => names.push(c.name));
+
+            return names.map(n => {
+                const parts = n.trim().split(' ');
+                const last = parts.length > 1 ? parts.pop() : parts[0];
+                const first = parts.length > 1 ? parts.join(' ') : '';
+
+                if (type === 'last_first_initial') {
+                    return `${last}, ${first ? first.charAt(0) + '.' : ''}`;
+                } else if (type === 'last_first') {
+                    return `${last}, ${first}`;
+                } else if (type === 'first_initial_last') {
+                    return `${first ? first.charAt(0) + '.' : ''} ${last}`;
+                } else if (type === 'all_caps') {
+                    return `${last.toUpperCase()}, ${first ? first.charAt(0) + '.' : ''}`;
+                }
+                return n; // normal
+            });
+        };
+
+        const authorsLFI = getAuthorsHelper('last_first_initial'); // Doe, J.
+        const authorsLF = getAuthorsHelper('last_first'); // Doe, John
+        const authorsFIL = getAuthorsHelper('first_initial_last'); // J. Doe
+        const authorsCaps = getAuthorsHelper('all_caps'); // DOE, J.
+
+        switch (style) {
+            case 'APA':
+                return `${authorsLFI.join(', & ')} (${year}). ${title}. ${journal}, ${vol}(${issue}). ${doiUrl}`;
+            case 'MLA':
+                return `${authorsLF.join(', ')}. "${title}." ${journal}, vol. ${vol}, no. ${issue}, ${year}${doiUrl ? `, ${doiUrl}` : ''}.`;
+            case 'Chicago':
+                return `${authorsLF.join(', and ')}. "${title}." ${journal} ${vol}, no. ${issue} (${year}).${doiUrl ? ` ${doiUrl}` : ''}`;
+            case 'Harvard':
+                return `${authorsLFI.join(', ')} (${year}) '${title}', ${journal}, ${vol}(${issue}). Available at: ${doiUrl}`;
+            case 'IEEE':
+                return `${authorsFIL.join(', ')}, "${title}," ${journal}, vol. ${vol}, no. ${issue}, ${month} ${year}.`;
+            case 'ACM':
+                return `${authorsFIL.join(', ')}. ${year}. ${title}. ${journal} ${vol}, ${issue} (${month} ${year}). DOI:${doiUrl}`;
+            case 'ACS':
+                return `${authorsLFI.join('; ')} ${title}. ${journal} ${year}, ${vol} (${issue}).`;
+            case 'ABNT':
+                return `${authorsCaps.join('; ')}. ${title}. ${journal}, v. ${vol}, n. ${issue}, ${year}.`;
+            case 'Turabian':
+                return `${authorsLF.join(', ')}. "${title}." ${journal} ${vol}, no. ${issue} (${year}).`;
+            case 'Vancouver':
+                return `${authorsLFI.map(a => a.replace(',', '')).join(', ')}. ${title}. ${journal}. ${year} ${month};${vol}(${issue}).`;
+            default:
+                return `${authorsLFI.join(', & ')} (${year}). ${title}. ${journal}, ${vol}(${issue}). ${doiUrl}`;
+        }
+    };
+
+    const downloadCitation = (format) => {
+        let content = '';
+        const filename = `citation-${paper.slug || paper.id}.${format === 'bibtex' ? 'bib' : 'ris'}`;
+
+        if (format === 'bibtex') {
+            const authorsBib = getAuthorsHelper('normal').join(' and ');
+            content = `@article{${paper.slug || paper.id},
+  title={${paper.title}},
+  author={${authorsBib}},
+  journal={BAUST Journal},
+  volume={${paper.volume}},
+  number={${paper.issue}},
+  year={${dayjs(paper.published_at).format('YYYY')}},
+  month={${dayjs(paper.published_at).format('MMM')}},
+  doi={${paper.doi || ''}}
+}`;
+        } else {
+            // RIS
+            content = `TY  - JOUR
+TI  - ${paper.title}
+${getAuthorsHelper('normal').map(a => `AU  - ${a}`).join('\n')}
+JO  - BAUST Journal
+VL  - ${paper.volume}
+IS  - ${paper.issue}
+PY  - ${dayjs(paper.published_at).format('YYYY')}
+DO  - ${paper.doi || ''}
+ER  -`;
+        }
+
+        const blob = new Blob([content], { type: 'text/plain' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        a.click();
+        window.URL.revokeObjectURL(url);
+    };
 
     return (
         <PublicLayout>
@@ -178,24 +290,54 @@ export default function PaperView() {
                         {/* Citation Card */}
                         <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200">
                             <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wide mb-3 flex items-center gap-2">
-                                <FontAwesomeIcon icon={faQuoteRight} className="text-primary-500" /> Cite this article
+                                <FontAwesomeIcon icon={faQuoteRight} className="text-primary-500" /> How to Cite
                             </h3>
-                            <div className="bg-gray-50 p-4 rounded-xl text-xs text-gray-600 leading-relaxed break-words border border-gray-100 font-serif">
-                                {paper.author?.user?.name?.split(' ').pop()}, {paper.author?.user?.name?.charAt(0)}.,
-                                {paper.coauthors?.map(c => ` ${c.name.split(' ').pop()}, ${c.name.charAt(0)}.`).join('')} ({dayjs(paper.published_at).format('YYYY')}).
-                                "{paper.title}". <em>BAUST Journal</em>, Vol. {paper.volume}, Issue {paper.issue}.
-                                {paper.doi && ` https://doi.org/${paper.doi}`}
+
+                            <div className="bg-gray-50 p-4 rounded-t-xl text-xs text-gray-700 leading-relaxed break-words border border-gray-200 font-serif min-h-[80px]">
+                                {getFormattedCitation(citationFormat)}
                             </div>
-                            <button
-                                onClick={() => {
-                                    const text = `${paper.author?.user?.name?.split(' ').pop()}, ${paper.author?.user?.name?.charAt(0)}., ${paper.coauthors?.map(c => ` ${c.name.split(' ').pop()}, ${c.name.charAt(0)}.`).join('')} (${dayjs(paper.published_at).format('YYYY')}). "${paper.title}". BAUST Journal, ${paper.volume}(${paper.issue}).`;
-                                    navigator.clipboard.writeText(text);
-                                    alert('Citation copied to clipboard!');
-                                }}
-                                className="mt-3 text-primary-600 text-xs font-bold hover:text-primary-700 transition"
-                            >
-                                Copy Citation
-                            </button>
+
+                            <div className="border border-gray-200 border-t-0 rounded-b-xl overflow-hidden">
+                                <button
+                                    onClick={() => setIsCitationMenuOpen(!isCitationMenuOpen)}
+                                    className="w-full flex justify-between items-center px-4 py-2 bg-gray-100 text-xs font-bold text-gray-700 hover:bg-gray-200 transition-colors"
+                                >
+                                    <span>More Citation Formats</span>
+                                    <FontAwesomeIcon icon={isCitationMenuOpen ? faChevronUp : faChevronDown} />
+                                </button>
+
+                                {isCitationMenuOpen && (
+                                    <div className="bg-white max-h-48 overflow-y-auto custom-scrollbar">
+                                        {citationStyles.map(style => (
+                                            <button
+                                                key={style}
+                                                onClick={() => setCitationFormat(style)}
+                                                className={`w-full text-left px-4 py-2 text-xs border-b border-gray-100 last:border-0 hover:bg-primary-50 hover:text-primary-700 transition-colors ${citationFormat === style ? 'bg-primary-50 text-primary-700 font-bold' : 'text-gray-600'}`}
+                                            >
+                                                {style}
+                                            </button>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+
+                            <div className="mt-4 pt-4 border-t border-gray-100">
+                                <h4 className="text-xs font-bold text-gray-500 mb-2 uppercase">Download Citation</h4>
+                                <div className="flex gap-2">
+                                    <button
+                                        onClick={() => downloadCitation('ris')}
+                                        className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 bg-white border border-gray-300 rounded-lg text-xs font-medium text-gray-700 hover:bg-gray-50 hover:text-primary-600 transition-all shadow-sm"
+                                    >
+                                        <FontAwesomeIcon icon={faDownload} /> Endnote/RIS
+                                    </button>
+                                    <button
+                                        onClick={() => downloadCitation('bibtex')}
+                                        className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 bg-white border border-gray-300 rounded-lg text-xs font-medium text-gray-700 hover:bg-gray-50 hover:text-primary-600 transition-all shadow-sm"
+                                    >
+                                        <FontAwesomeIcon icon={faDownload} /> BibTeX
+                                    </button>
+                                </div>
+                            </div>
                         </div>
 
                         {/* Journal Info */}
