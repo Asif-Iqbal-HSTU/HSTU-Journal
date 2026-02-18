@@ -50,6 +50,7 @@ class DoiService
         $body = $xml->addChild('body');
         $journal = $body->addChild('journal');
 
+        $journalMeta = $journal->addChild('journal_metadata');
         $journalMeta->addChild('full_title', 'BAUST Journal');
         $journalMeta->addChild('abbrev_title', 'BAUSTJ');
         $issnPrint = $journalMeta->addChild('issn', '2708-9835');
