@@ -19,7 +19,8 @@ class DoiController extends Controller
     public function assign(Paper $paper)
     {
         if ($paper->doi) {
-            return back()->with('error', 'DOI already assigned.');
+            // Allow reassignment, but maybe log it?
+            // return back()->with('error', 'DOI already assigned.');
         }
 
         $doi = $this->doiService->generateDoi($paper);

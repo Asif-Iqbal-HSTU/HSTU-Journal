@@ -21,9 +21,9 @@ class DoiService
 
     public function generateDoi(Paper $paper): string
     {
-        // Pattern: Prefix/journal-slug.id
-        // Example: 10.66039/baustj.25
-        return "{$this->prefix}/baustj.{$paper->id}";
+        // Pattern: Prefix/volume_issue_id
+        // Example: 10.66039/4_1_25
+        return "{$this->prefix}/{$paper->volume}_{$paper->issue}_{$paper->id}";
     }
 
     public function generateXml(Paper $paper): string
