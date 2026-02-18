@@ -35,7 +35,11 @@ export default function Footer() {
                             <a href="https://doi.org/" target="_blank" rel="noopener noreferrer" className="opacity-90 hover:opacity-100 transition-opacity">
                                 <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/DOI_logo.svg/320px-DOI_logo.svg.png" alt="DOI" className="h-7 w-auto bg-gray-100 rounded px-2 py-1" />
                             </a>
-                            <a href="https://portal.issn.org/resource/ISSN/2521-5256" target="_blank" rel="noopener noreferrer" className="opacity-90 hover:opacity-100 transition-opacity">
+                            <div className="flex flex-col gap-1">
+                                <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">ISSN (Online): 3079-0972</span>
+                                <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">ISSN (Print): 2708-9835</span>
+                            </div>
+                            <a href="https://portal.issn.org/resource/ISSN/3079-0972" target="_blank" rel="noopener noreferrer" className="opacity-90 hover:opacity-100 transition-opacity mt-2">
                                 <img src="/images/issn.png" alt="ISSN Portal" className="h-8 w-auto object-contain" />
                             </a>
                         </div>

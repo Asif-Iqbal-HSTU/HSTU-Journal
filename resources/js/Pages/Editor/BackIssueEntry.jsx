@@ -33,7 +33,7 @@ export default function BackIssueEntry({ papers, paper, isEditing = false }) {
         if (data.volume && data.issue && data.serial) {
             setData(prev => ({
                 ...prev,
-                doi: `${prev.volume}_${prev.issue}_${prev.serial}`
+                doi: `10.66039/${prev.volume}_${prev.issue}_${prev.serial}`
             }));
         }
     }, [data.volume, data.issue, data.serial]);

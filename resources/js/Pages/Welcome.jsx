@@ -74,8 +74,11 @@ export default function Welcome({ auth, latestPapers, editors }) {
                         <div className="flex flex-col justify-center px-6 py-16 lg:py-0 lg:pr-12 relative z-10 lg:pl-8">
                             <div className="flex flex-wrap gap-3 mb-6">
                                 <span className="inline-flex items-center gap-2 py-1 px-3 rounded-full bg-primary-900/50 border border-primary-700/50 text-primary-300 text-xs font-semibold w-fit tracking-wider uppercase backdrop-blur-sm shadow-sm">
-                                    <span className="w-2 h-2 rounded-full bg-primary-500 animate-pulse"></span>
-                                    ISSN: 2521-5256
+                                    ISSN (Online): 3079-0972
+                                </span>
+                                <span className="inline-flex items-center gap-2 py-1 px-3 rounded-full bg-primary-900/50 border border-primary-700/50 text-primary-300 text-xs font-semibold w-fit tracking-wider uppercase backdrop-blur-sm shadow-sm">
+                                    <span className="w-2 h-2 rounded-full bg-primary-500"></span>
+                                    ISSN (Print): 2708-9835
                                 </span>
                                 <span className="inline-flex items-center gap-2 py-1 px-3 rounded-full bg-blue-900/50 border border-blue-700/50 text-blue-300 text-xs font-semibold w-fit tracking-wider uppercase backdrop-blur-sm shadow-sm">
                                     <span className="w-2 h-2 rounded-full bg-blue-500"></span>
@@ -203,7 +206,7 @@ export default function Welcome({ auth, latestPapers, editors }) {
                                 <a href="https://doi.org/" target="_blank" rel="noopener noreferrer" className="opacity-90 hover:opacity-100 transition-opacity transform hover:scale-105">
                                     <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/DOI_logo.svg/320px-DOI_logo.svg.png" alt="DOI" className="h-10 w-auto" />
                                 </a>
-                                <a href="https://portal.issn.org/resource/ISSN/2521-5256" target="_blank" rel="noopener noreferrer" className="opacity-90 hover:opacity-100 transition-opacity transform hover:scale-105">
+                                <a href="https://portal.issn.org/resource/ISSN/3079-0972" target="_blank" rel="noopener noreferrer" className="opacity-90 hover:opacity-100 transition-opacity transform hover:scale-105">
                                     <img src="/images/issn.png" alt="ISSN Portal" className="h-12 w-auto object-contain" />
                                 </a>
                             </div>
@@ -252,8 +255,9 @@ export default function Welcome({ auth, latestPapers, editors }) {
 
                         {/* ISSN & Stats */}
                         <div className="bg-primary-900 text-white rounded-2xl p-6 shadow-lg text-center">
-                            <h4 className="text-primary-200 text-sm uppercase font-semibold">ISSN (Print)</h4>
-                            <p className="text-3xl font-bold tracking-widest my-2">2521-5256</p>
+                            <h4 className="text-primary-200 text-sm uppercase font-semibold">ISSN</h4>
+                            <p className="text-sm font-bold text-gray-300">Online: 3079-0972</p>
+                            <p className="text-sm font-bold text-gray-300">Print: 2708-9835</p>
                             <div className="mt-6 grid grid-cols-2 gap-4 text-center">
                                 <div>
                                     <div className="text-2xl font-bold text-accent">4</div>

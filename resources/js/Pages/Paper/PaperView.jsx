@@ -201,7 +201,7 @@ ER  -`;
                             {paper.doi && (
                                 <div className="flex items-center gap-1 bg-amber-50 px-3 py-1 rounded-full border border-amber-100 text-amber-800">
                                     <FontAwesomeIcon icon={faFingerprint} />
-                                    DOI: <a href={`https://doi.org/${paper.doi}`} className="hover:underline ml-1 font-mono">{paper.doi}</a>
+                                    DOI: <a href={paper.doi.startsWith('http') ? paper.doi : `https://doi.org/${paper.doi}`} target="_blank" rel="noopener noreferrer" className="hover:underline ml-1 font-mono">{paper.doi}</a>
                                 </div>
                             )}
                         </div>
@@ -350,9 +350,13 @@ ER  -`;
                                 </div>
                                 <div className="flex justify-between items-center text-sm border-b border-gray-200 pb-2">
                                     <span className="text-gray-500">ISSN (Print)</span>
-                                    <span className="font-bold text-gray-900">2521-5256</span>
+                                    <span className="font-bold text-gray-900">2708-9835</span>
                                 </div>
-                                <div className="flex justify-between items-center text-sm">
+                                <div className="flex justify-between items-center text-sm border-b border-gray-200 pb-2">
+                                    <span className="text-gray-500">ISSN (Online)</span>
+                                    <span className="font-bold text-gray-900">3079-0972</span>
+                                </div>
+                                <div className="flex justify-between items-center text-sm border-b border-gray-200 pb-2">
                                     <span className="text-gray-500">Publisher</span>
                                     <span className="font-bold text-gray-900 text-right">BAUST</span>
                                 </div>
