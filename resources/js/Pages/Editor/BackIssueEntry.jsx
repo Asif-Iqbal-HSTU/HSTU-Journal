@@ -1,6 +1,6 @@
 import Layout from "@/Layouts/Layout.jsx";
 import { Head, usePage, router } from "@inertiajs/react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Modal from "@/Components/Modal.jsx";
 
 export default function BackIssueEntry() {
@@ -18,6 +18,7 @@ export default function BackIssueEntry() {
         keywords: '',
         volume: '',
         issue: '',
+        serial: '',
         published_at: '',
         doi: '',
         pdfFile: null,
@@ -25,6 +26,15 @@ export default function BackIssueEntry() {
             { name:'', email:'', affiliation:'', orcid:'' }
         ]
     });
+
+    useEffect(() => {
+        if(data.volume && data.issue && data.serial){
+            setData(prev => ({
+                ...prev,
+                doi: `${prev.volume}_${prev.issue}_${prev.serial}`
+            }));
+        }
+    }, [data.volume, data.issue, data.serial]);
 
     const addAuthor = () => {
         setData({
@@ -57,6 +67,7 @@ export default function BackIssueEntry() {
                     keywords: '',
                     volume: '',
                     issue: '',
+                    serial: '',
                     published_at: '',
                     doi: '',
                     pdfFile: null,
@@ -120,7 +131,7 @@ export default function BackIssueEntry() {
                                        onChange={e => setData({...data,keywords:e.target.value})}/>
                             </div>
 
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-3 gap-4">
                                 <div>
                                     <label className="block text-sm font-medium">Volume</label>
                                     <input className="mt-1 input w-full"
@@ -132,6 +143,12 @@ export default function BackIssueEntry() {
                                     <input className="mt-1 input w-full"
                                            value={data.issue}
                                            onChange={e => setData({...data,issue:e.target.value})}/>
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium">Serial</label>
+                                    <input className="mt-1 input w-full"
+                                           value={data.serial}
+                                           onChange={e => setData({...data,serial:e.target.value})}/>
                                 </div>
                             </div>
 
