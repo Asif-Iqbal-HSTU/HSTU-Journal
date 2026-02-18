@@ -1,5 +1,5 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import {Head, usePage} from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
 import Layout from "@/Layouts/Layout.jsx";
 import PaperPreview from "@/Pages/Paper/PaperPreview.jsx";
 import PaperCard from "@/Components/PaperCard.jsx";
@@ -20,6 +20,7 @@ export default function Dashboard() {
         >
             <Head title="Author Dashboard" />
 
+
             <div className="py-12">
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
                     <div className="overflow-hidden bg-white shadow-md sm:rounded-lg">
@@ -27,7 +28,7 @@ export default function Dashboard() {
                             <h2 className="mb-2 text-gray-900 font-bold text-xl">Your papers</h2>
                             <p className="text-sm text-gray-900">Here is a list of papers You have submitted
                                 till now</p>
-                            <hr className="h-px my-2 bg-green-300 border-0 dark:bg-gray-700"/>
+                            <hr className="h-px my-2 bg-green-300 border-0 dark:bg-gray-700" />
                             <div className="mt-5">
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 flex justify-center">
                                     {papers.map((paper) => {

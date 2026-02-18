@@ -35,4 +35,10 @@ return [
         ],
     ],
 
+    'crossref' => [
+        'username' => env('CROSSREF_USERNAME'),
+        'password' => env('CROSSREF_PASSWORD'),
+        'doi_prefix' => env('CROSSREF_DOI_PREFIX', '10.66039'),
+    ],
+
 ];
