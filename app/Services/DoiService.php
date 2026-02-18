@@ -50,10 +50,13 @@ class DoiService
         $body = $xml->addChild('body');
         $journal = $body->addChild('journal');
 
-        $journalMeta = $journal->addChild('journal_metadata');
         $journalMeta->addChild('full_title', 'BAUST Journal');
         $journalMeta->addChild('abbrev_title', 'BAUSTJ');
-        // $journalMeta->addChild('issn', 'XXXX-XXXX'); // Add ISSN if available
+        $issnPrint = $journalMeta->addChild('issn', '2708-9835');
+        $issnPrint->addAttribute('media_type', 'print');
+
+        $issnOnline = $journalMeta->addChild('issn', '3079-0972');
+        $issnOnline->addAttribute('media_type', 'electronic');
 
         $journalIssue = $journal->addChild('journal_issue');
         $pubDate = Carbon::parse($paper->published_at);
