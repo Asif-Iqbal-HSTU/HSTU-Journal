@@ -47,8 +47,8 @@ export default function BackIssueEntry({ papers, paper, isEditing = false }) {
                 authors.push({
                     name: paper.author.user.name,
                     email: paper.author.user.email,
-                    affiliation: paper.author.affiliation || '',
-                    orcid: paper.author.orcid_id || ''
+                    affiliation: paper.author.user.affiliation || '',
+                    orcid: paper.author.user.orcid_id || ''
                 });
             }
             // Add coauthors
@@ -69,7 +69,7 @@ export default function BackIssueEntry({ papers, paper, isEditing = false }) {
                 keywords: paper.keywords || '',
                 volume: paper.volume || '',
                 issue: paper.issue || '',
-                serial: '', // Initialize serial to avoid uncontrolled input warning
+                serial: paper.serial || '',
                 published_at: paper.published_at ? paper.published_at.split(' ')[0] : '',
                 doi: paper.doi || '',
                 pdfFile: null,
@@ -379,7 +379,7 @@ export default function BackIssueEntry({ papers, paper, isEditing = false }) {
                                                     </td>
                                                     <td className="px-6 py-4">
                                                         <div className="flex flex-col">
-                                                            <span className="text-sm font-medium text-gray-900">Vol {p.volume}, Issue {p.issue}</span>
+                                                            <span className="text-sm font-medium text-gray-900">Vol {p.volume}, Issue {p.issue}, Serial {p.serial}</span>
                                                             <span className="text-[10px] text-gray-400 font-bold uppercase">{new Date(p.published_at).toLocaleDateString()}</span>
                                                         </div>
                                                     </td>

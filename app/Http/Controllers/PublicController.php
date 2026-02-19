@@ -16,7 +16,7 @@ class PublicController extends Controller
         $latestPapers = Paper::where('is_published', 1)
             ->with(['author.user', 'coauthors'])
             ->orderBy('published_at', 'desc')
-            ->orderBy('id', 'desc')
+            ->orderByRaw('CAST(serial AS UNSIGNED) ASC')
             ->limit(6)
             ->get();
 
@@ -57,6 +57,7 @@ class PublicController extends Controller
                 ->where('volume', $volume)
                 ->where('issue', $issue)
                 ->with(['author.user', 'coauthors'])
+                ->orderByRaw('CAST(serial AS UNSIGNED) ASC')
                 ->get();
         }
 

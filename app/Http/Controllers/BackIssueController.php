@@ -23,6 +23,7 @@ class BackIssueController extends Controller
         $query = Paper::query()
             ->where('is_published', 1) // Assuming 3 = Published/Accepted
             ->orderBy('published_at', 'desc')
+            ->orderByRaw('CAST(serial AS UNSIGNED) ASC')
             ->with(['author.user', 'coauthors']); // eager load authors
 
         if ($volume) {
@@ -54,6 +55,7 @@ class BackIssueController extends Controller
     {
         $papers = Paper::where('type', 'Back Issue')
             ->orderBy('published_at', 'desc')
+            ->orderByRaw('CAST(serial AS UNSIGNED) ASC')
             ->with(['author.user', 'coauthors'])
             ->get();
 
@@ -72,6 +74,7 @@ class BackIssueController extends Controller
             'authors' => 'required|array|min:1',
             'volume' => 'required',
             'issue' => 'required',
+            'serial' => 'required',
             'published_at' => 'required|date'
         ]);
 
@@ -101,6 +104,7 @@ class BackIssueController extends Controller
             'published_at' => $request->published_at,
             'volume' => $request->volume,
             'issue' => $request->issue,
+            'serial' => $request->serial,
             'doi' => $request->doi ?? null,
         ]);
 
@@ -125,7 +129,9 @@ class BackIssueController extends Controller
                         'name' => $author['name'],
                         'password' => bcrypt(Str::random(10)),
                         'username' => Str::random(8),
-                        'role' => 'author'
+                        'role' => 'author',
+                        'affiliation' => $author['affiliation'],
+                        'orcid_id' => $author['orcid'] ?? null
                     ]
                 );
 
@@ -237,6 +243,7 @@ class BackIssueController extends Controller
 
         $papers = Paper::where('type', 'Back Issue')
             ->orderBy('published_at', 'desc')
+            ->orderByRaw('CAST(serial AS UNSIGNED) ASC')
             ->with(['author.user', 'coauthors'])
             ->get();
 
@@ -249,7 +256,7 @@ class BackIssueController extends Controller
 
     public function update(Request $request, $id)
     {
-        $paper = Paper::findOrFail($id);
+        $paper = Paper::with(['author.user'])->findOrFail($id);
 
         $request->validate([
             'title' => 'required',
@@ -257,6 +264,7 @@ class BackIssueController extends Controller
             'keywords' => 'required',
             'volume' => 'required',
             'issue' => 'required',
+            'serial' => 'required',
             'published_at' => 'required|date',
             'authors' => 'required|array|min:1',
         ]);
@@ -267,6 +275,7 @@ class BackIssueController extends Controller
             'keywords' => $request->keywords,
             'volume' => $request->volume,
             'issue' => $request->issue,
+            'serial' => $request->serial,
             'published_at' => $request->published_at,
             'doi' => $request->doi ?? null,
         ];
@@ -288,6 +297,8 @@ class BackIssueController extends Controller
                 $user->update([
                     'name' => $authorData['name'],
                     'email' => $authorData['email'],
+                    'affiliation' => $authorData['affiliation'],
+                    'orcid_id' => $authorData['orcid'] ?? null,
                 ]);
             }
         }
