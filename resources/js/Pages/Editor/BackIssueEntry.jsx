@@ -3,7 +3,7 @@ import { Head, usePage, router, Link } from "@inertiajs/react";
 import { useState, useEffect } from "react";
 import Modal from "@/Components/Modal.jsx";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEdit, faTrash, faPlus, faFilePdf, faUserGraduate, faBarcode, faCode } from "@fortawesome/free-solid-svg-icons";
+import { faEdit, faTrash, faPlus, faFilePdf, faUserGraduate, faBarcode, faCode, faCloudUploadAlt } from "@fortawesome/free-solid-svg-icons";
 
 export default function BackIssueEntry({ papers, paper, isEditing = false }) {
     const user = usePage().props.auth.user;
@@ -156,6 +156,34 @@ export default function BackIssueEntry({ papers, paper, isEditing = false }) {
             onSuccess: () => {
                 setNotification(hasDoi ? "DOI Reassigned Successfully!" : "DOI Assigned Successfully!");
                 setShowModal(true);
+            },
+            preserveScroll: true
+        });
+    };
+
+    const [isRegisteringDoi, setIsRegisteringDoi] = useState(false);
+
+    const registerDoi = (id) => {
+        if (!confirm('This will submit the article metadata to Crossref via API. Are you sure?')) {
+            return;
+        }
+
+        setIsRegisteringDoi(true);
+        router.post(route('doi.register', id), {}, {
+            onSuccess: (page) => {
+                setIsRegisteringDoi(false);
+                if (page.props.flash.success) {
+                    setNotification(page.props.flash.success);
+                    setShowModal(true);
+                } else if (page.props.flash.error) {
+                    setErrorMessages([page.props.flash.error]);
+                    setShowErrorModal(true);
+                }
+            },
+            onError: (errors) => {
+                setIsRegisteringDoi(false);
+                setErrorMessages(Object.values(errors).flat());
+                setShowErrorModal(true);
             },
             preserveScroll: true
         });
@@ -409,6 +437,15 @@ export default function BackIssueEntry({ papers, paper, isEditing = false }) {
                                                                     title={p.doi ? "Reassign DOI" : "Assign DOI"}>
                                                                     <FontAwesomeIcon icon={faBarcode} /> {p.doi ? "Reassign" : "Assign"}
                                                                 </button>
+
+                                                                {p.doi && (
+                                                                    <button onClick={() => registerDoi(p.id)}
+                                                                        disabled={isRegisteringDoi}
+                                                                        className={`text-[10px] bg-green-50 text-green-700 px-2 py-1 rounded hover:bg-green-100 transition-colors flex items-center gap-1 border border-green-200 ${isRegisteringDoi ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                                                        title="Submit Metadata to Crossref API">
+                                                                        <FontAwesomeIcon icon={faCloudUploadAlt} /> {isRegisteringDoi ? "Submitting..." : "API Submit"}
+                                                                    </button>
+                                                                )}
                                                             </div>
                                                         </div>
                                                     </td>

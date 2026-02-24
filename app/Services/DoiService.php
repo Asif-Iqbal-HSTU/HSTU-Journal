@@ -126,4 +126,41 @@ class DoiService
 
         return $xml->asXML();
     }
+
+    public function registerDoi(Paper $paper)
+    {
+        $xmlContent = $this->generateXml($paper);
+        $filename = 'crossref-' . Str::slug($paper->id) . '.xml';
+
+        $username = config('services.crossref.username');
+        $password = config('services.crossref.password');
+
+        if (!$username || !$password) {
+            return ['success' => false, 'message' => 'Crossref credentials are not configured in .env file.'];
+        }
+
+        $response = \Illuminate\Support\Facades\Http::attach(
+            'fname',
+            $xmlContent,
+            $filename
+        )->post('https://doi.crossref.org/servlet/deposit', [
+                    'operation' => 'doMDUpload',
+                    'login_id' => $username,
+                    'login_passwd' => $password,
+                ]);
+
+        if ($response->successful()) {
+            return collect([
+                'success' => true,
+                'message' => 'Successfully submitted to Crossref. Please check your email for the deposit report.',
+                'response' => $response->body()
+            ]);
+        }
+
+        return collect([
+            'success' => false,
+            'message' => 'Failed to submit DOI to Crossref API. HTTP Status: ' . $response->status(),
+            'response' => $response->body()
+        ]);
+    }
 }

@@ -38,4 +38,20 @@ class DoiController extends Controller
             ->header('Content-Type', 'text/xml')
             ->header('Content-Disposition', "attachment; filename=\"{$filename}\"");
     }
+
+    public function register(Paper $paper)
+    {
+        if (!$paper->doi) {
+            $doi = $this->doiService->generateDoi($paper);
+            $paper->update(['doi' => $doi]);
+        }
+
+        $result = $this->doiService->registerDoi($paper);
+
+        if ($result['success']) {
+            return back()->with('success', $result['message']);
+        }
+
+        return back()->with('error', $result['message']);
+    }
 }

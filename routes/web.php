@@ -103,6 +103,7 @@ Route::middleware(['auth', 'verified', EditorMiddleware::class])->group(function
 
     // DOI Management
     Route::post('/doi/assign/{paper}', [\App\Http\Controllers\DoiController::class, 'assign'])->name('doi.assign');
+    Route::post('/doi/register/{paper}', [\App\Http\Controllers\DoiController::class, 'register'])->name('doi.register');
     Route::get('/doi/xml/{paper}', [\App\Http\Controllers\DoiController::class, 'downloadXml'])->name('doi.xml');
 });
 
