@@ -139,7 +139,7 @@ class DoiService
             return ['success' => false, 'message' => 'Crossref credentials are not configured in .env file.'];
         }
 
-        $response = \Illuminate\Support\Facades\Http::attach(
+        $response = \Illuminate\Support\Facades\Http::withoutVerifying()->attach(
             'fname',
             $xmlContent,
             $filename
@@ -149,18 +149,30 @@ class DoiService
                     'login_passwd' => $password,
                 ]);
 
-        if ($response->successful()) {
+        $body = $response->body();
+        // Crossref often returns HTTP 200 with a Login HTML page if credentials are wrong.
+        // A successful submission normally contains "Your batch submission was successfully received."
+        if ($response->successful() && (strpos($body, 'successfully received') !== false || strpos($body, 'Success') !== false)) {
             return collect([
                 'success' => true,
                 'message' => 'Successfully submitted to Crossref. Please check your email for the deposit report.',
-                'response' => $response->body()
+                'response' => $body
+            ]);
+        }
+
+        // Check if the response was actually a login page meaning bad credentials
+        if (strpos($body, 'login') !== false || strpos($body, 'Welcome to Crossref') !== false) {
+            return collect([
+                'success' => false,
+                'message' => 'Failed to submit: Invalid Crossref username or password in .env file.',
+                'response' => 'Authentication failed'
             ]);
         }
 
         return collect([
             'success' => false,
             'message' => 'Failed to submit DOI to Crossref API. HTTP Status: ' . $response->status(),
-            'response' => $response->body()
+            'response' => $body
         ]);
     }
 }
