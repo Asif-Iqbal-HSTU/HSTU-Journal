@@ -22,13 +22,13 @@ export default function Downloads() {
 
                         <div className="p-8">
                             <a
-                                href="/downloads/BAUSTJ_Camera_Ready_Template.docx" // Assuming file location, can be updated later
+                                href="/template/BAUST Journal Template.docx"
                                 className="inline-flex items-center justify-center px-8 py-4 border border-transparent text-lg font-medium rounded-full text-white bg-primary-600 hover:bg-primary-700 md:text-xl transition-transform transform hover:-translate-y-1 shadow-lg"
                             >
                                 <FontAwesomeIcon icon={faDownload} className="mr-3" />
                                 Download Template (DOCX)
                             </a>
-                            <p className="mt-4 text-sm text-gray-400">BAUSTJ_Camera_Ready_Template.docx</p>
+                            <p className="mt-4 text-sm text-gray-400">BAUST Journal Template.docx</p>
                         </div>
 
                         <div className="bg-red-50 p-6 border-t border-red-100">
